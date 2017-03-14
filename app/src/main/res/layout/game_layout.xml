@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.lixinjia.mycanvas.surface.MySurfaceView
+        android:id="@+id/mySurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bulletLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I"/>
+
+        <Button
+            android:id="@+id/addRobot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加机器人"/>
+        <Button
+            android:id="@+id/suspend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂停"/>
+    </LinearLayout>
+</RelativeLayout>
