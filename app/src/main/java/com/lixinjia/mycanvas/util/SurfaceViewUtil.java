@@ -1,13 +1,10 @@
 package com.lixinjia.mycanvas.util;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Region;
-import android.util.DisplayMetrics;
 
 import java.util.Random;
 
