@@ -134,7 +134,11 @@ public class StraightLineView extends BaseDrawGridView {
     private String[] totalTargetTitleRightText;
     private int[] titleRightRectangleWithinColorList;
     private ArrayList<int[]> XdataYEndList;
+    private ArrayList<double[]> XdataYEndListDouble;
     private int dataSize = 1;
+    private List<double[]> XdataDouble;
+    private double[] totalTargetValueDouble;
+    private List<double[]> targetValueDouble;
 
     public StraightLineView(Context context) {
         super(context);
@@ -204,6 +208,38 @@ public class StraightLineView extends BaseDrawGridView {
                         setGrid();
                     }
                 }
+            }else{
+                if(XdataDouble!=null){
+                    if(gradientColor!=null){
+                        for (int i = 0; i < XdataDouble.size(); i++) {
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            int[] color = new int[gradientColor.get(i).length];
+                            for (int i1 = 0; i1 < gradientColor.get(i).length; i1++) {
+                                color[i1] = gradientColor.get(i)[i1];
+                            }
+                            Shader mShader = new LinearGradient(X, adaptation.setCanvasAdaptation(getGridYFromTop()), X, Y, color, null, Shader.TileMode.REPEAT); // 一个材质,打造出一个线性梯度沿著一条线。
+                            mPaint.setShader(mShader);
+                            Path path = new Path();
+                            path.moveTo(X+adaptation.setCanvasAdaptation(getXYWidth()/2), Y-adaptation.setCanvasAdaptation(getXYWidth()));// 此点为多边形的起点
+                            for (int i1 = 0; i1 < dataSize; i1++) {
+                                if(i1==0){
+                                    path.lineTo(DataXY[i1]+adaptation.setCanvasAdaptation(getXYWidth()/2), getYValue(XdataDouble.get(i)[i1]));
+                                }else if(i1 == dataSize-1){
+                                    path.lineTo(DataXY[i1]-adaptation.setCanvasAdaptation(getXYWidth()/2), getYValue(XdataDouble.get(i)[i1]));
+                                }else{
+                                    path.lineTo(DataXY[i1], getYValue(XdataDouble.get(i)[i1]));
+                                }
+                            }
+                            path.lineTo(DataXY[dataSize-1]-adaptation.setCanvasAdaptation(getXYWidth()/2), Y-adaptation.setCanvasAdaptation(getXYWidth()));
+                            path.close(); // 使这些点构成封闭的多边形
+                            mCanvas.drawPath(path, mPaint);
+                        }
+                        if(!isBeforeGrid()){
+                            setGrid();
+                        }
+                    }
+                }
             }
         }
         //绘制总目标值
@@ -220,6 +256,22 @@ public class StraightLineView extends BaseDrawGridView {
                     mPaint.setColor(totalTargeValueColor);
                 }
                 mCanvas.drawLine(DataXY[0], getYValue(totalTargetValue[i]), getmWidth(), getYValue(totalTargetValue[i]), mPaint);// 画线
+            }
+        }else{
+            if(totalTargetValueDouble!=null){
+                for (int i = 0; i < totalTargetValueDouble.length; i++) {
+                    mPaint = new Paint();
+                    mPaint.setAntiAlias(true);
+                    mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(totalTargeValueWidth));
+                    if(totalTargetValueColor!=null){
+                        if(totalTargetValueDouble.length == totalTargetValueColor.length){
+                            mPaint.setColor(totalTargetValueColor[i]);
+                        }
+                    }else{
+                        mPaint.setColor(totalTargeValueColor);
+                    }
+                    mCanvas.drawLine(DataXY[0], getYValue(totalTargetValueDouble[i]), getmWidth(),getYValue(totalTargetValueDouble[i]), mPaint);// 画线
+                }
             }
         }
         //绘制阶段目标值
@@ -239,6 +291,28 @@ public class StraightLineView extends BaseDrawGridView {
                     for (int i1 = 0; i1 < dataSize; i1++) {
                         if(i1 != 0){
                             mCanvas.drawLine(DataXY[i1-1], getYValue(targetValue.get(i)[i1-1]), DataXY[i1], getYValue(targetValue.get(i)[i1]), mPaint);// 画线
+                        }
+                    }
+                }
+            }
+        }else{
+            if(XdataDouble!=null){
+                if(targetValueDouble!=null){
+                    for (int i = 0; i < targetValueDouble.size(); i++) {
+                        mPaint = new Paint();
+                        mPaint.setAntiAlias(true);
+                        mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(targeValueWidth));
+                        if(targetValueColor!=null){
+                            if(targetValueDouble.size() == targetValueColor.length){
+                                mPaint.setColor(targetValueColor[i]);
+                            }
+                        }else{
+                            mPaint.setColor(targeValueColor);
+                        }
+                        for (int i1 = 0; i1 < dataSize; i1++) {
+                            if(i1 != 0){
+                                mCanvas.drawLine(DataXY[i1-1], getYValue(targetValueDouble.get(i)[i1-1]), DataXY[i1], getYValue(targetValueDouble.get(i)[i1]), mPaint);// 画线
+                            }
                         }
                     }
                 }
@@ -270,6 +344,33 @@ public class StraightLineView extends BaseDrawGridView {
                     }
                 }
             }
+        }else{
+            if(XdataDouble!=null){
+                for (int i = 0; i < XdataDouble.size(); i++) {
+                    mPaint = new Paint();
+                    mPaint.setAntiAlias(true);
+                    mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                    if(XdataColor!=null){
+                        if(XdataDouble.size() == XdataColor.length){
+                            mPaint.setColor(XdataColor[i]);
+                        }
+                    }else{
+                        mPaint.setColor(adaptation.setCanvasAdaptation(lineColor));
+                    }
+                    for (int i1 = 0; i1 < dataSize; i1++) {
+                        if(i1 != 0){
+                            mCanvas.drawLine(DataXY[i1-1], getYValue(XdataDouble.get(i)[i1-1]), DataXY[i1], getYValue(XdataDouble.get(i)[i1]), mPaint);// 画线
+                        }
+                        if(dataText){
+                            if(isRing){
+                                setDataText(DataXY[i1],getYValue(XdataDouble.get(i)[i1]),XdataDouble.get(i)[i1],adaptation.setCanvasAdaptation(ringRadius),dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
+                            }else{
+                                setDataText(DataXY[i1],getYValue(XdataDouble.get(i)[i1]),XdataDouble.get(i)[i1],0,dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
+                            }
+                        }
+                    }
+                }
+            }
         }
         //绘制圆环
         if(isRing){
@@ -290,6 +391,27 @@ public class StraightLineView extends BaseDrawGridView {
                     mPaint.setColor(Color.WHITE);
                     for (int i1 = 0; i1 < dataSize; i1++) {
                         mCanvas.drawCircle(DataXY[i1], getYValue(Xdata.get(i)[i1]), adaptation.setCanvasAdaptation(ringRadius-ringWidth), mPaint);
+                    }
+                }
+            }else{
+                if(XdataDouble!=null){
+                    for (int i = 0; i < XdataDouble.size(); i++) {
+                        mPaint = new Paint();
+                        mPaint.setAntiAlias(true);
+                        if(XDataRingColor!=null){
+                            mPaint.setColor(XDataRingColor[i]);
+                        }else{
+                            mPaint.setColor(ringColor);
+                        }
+                        for (int i1 = 0; i1 < dataSize; i1++) {
+                            mCanvas.drawCircle(DataXY[i1], getYValue(XdataDouble.get(i)[i1]), adaptation.setCanvasAdaptation(ringRadius), mPaint);
+                        }
+                        mPaint = new Paint();
+                        mPaint.setAntiAlias(true);
+                        mPaint.setColor(Color.WHITE);
+                        for (int i1 = 0; i1 < dataSize; i1++) {
+                            mCanvas.drawCircle(DataXY[i1], getYValue(XdataDouble.get(i)[i1]), adaptation.setCanvasAdaptation(ringRadius-ringWidth), mPaint);
+                        }
                     }
                 }
             }
@@ -431,6 +553,144 @@ public class StraightLineView extends BaseDrawGridView {
                     }
                 }
             }
+        }else{
+            if(XdataDouble!=null){
+                if(isTitleRight){
+                    titleRightXDistance = getmWidth()-adaptation.setCanvasAdaptation(titleRightTextRightDistance);
+                    //绘制数据折线的描述
+                    if(dataTitleRightText!=null){
+                        for (int i = 0; i < XdataDouble.size(); i++) {
+                            //绘制字
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            mPaint.setColor(titleRightTextColor);
+                            mPaint.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
+                            mCanvas.drawText(dataTitleRightText[i],titleRightXDistance-getTextWH(dataTitleRightText[i],mPaint).width(),
+                                    adaptation.setCanvasAdaptation(getTitleHeight())/2+adaptation.setCanvasAdaptation(5),mPaint);
+                            titleRightXDistance -= getTextWH(dataTitleRightText[i],mPaint).width()+adaptation.setCanvasAdaptation(titleRightTextlineDistance);
+                            //颜色渐变是否存在
+                            if(gradientColor==null){
+                                //绘制右上角小折线
+                                mPaint = new Paint();
+                                mPaint.setAntiAlias(true);
+                                mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                                if(XdataColor!=null){
+                                    if(XdataDouble.size() == XdataColor.length){
+                                        mPaint.setColor(XdataColor[i]);
+                                    }
+                                }else{
+                                    mPaint.setColor(adaptation.setCanvasAdaptation(lineColor));
+                                }
+                                mCanvas.drawLine(titleRightXDistance, adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                        titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                                mCanvas.drawLine(titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,
+                                        titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),mPaint);
+                                mCanvas.drawLine(titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                        titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*3), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                                titleRightXDistance -= adaptation.setCanvasAdaptation(titleRightLineMin)*3+adaptation.setCanvasAdaptation(titleRightTextBetweenDistance);
+                            }else{
+                                //绘制右上角小长方形
+                                Paint mPaint2 = new Paint();
+                                mPaint2.setColor(titleRightTextColor);
+                                mPaint2.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
+
+                                mPaint = new Paint();
+                                mPaint.setAntiAlias(true);
+                                mPaint.setStyle(Paint.Style.FILL);
+                                mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                                if(titleRightRectangleWithinColorList!=null){
+                                    mPaint.setColor(titleRightRectangleWithinColorList[i]);
+                                }else{
+                                    mPaint.setColor(titleRightRectangleWithinColor);
+                                }
+
+                                mCanvas.drawRect(titleRightXDistance-adaptation.setCanvasAdaptation(titleRightRectangleWidth),
+                                        adaptation.setCanvasAdaptation(getTitleHeight())/2-getTextWH(dataTitleRightText[i],mPaint2).height()/2-adaptation.setCanvasAdaptation(10),
+                                        titleRightXDistance,
+                                        adaptation.setCanvasAdaptation(getTitleHeight())/2+getTextWH(dataTitleRightText[i],mPaint2).height()/2-adaptation.setCanvasAdaptation(10), mPaint);// 正方形
+                                mPaint = new Paint();
+                                mPaint.setAntiAlias(true);
+                                mPaint.setStyle(Paint.Style.STROKE);
+                                mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                                if(XdataColor!=null){
+                                    if(XdataDouble.size() == XdataColor.length){
+                                        mPaint.setColor(XdataColor[i]);
+                                    }
+                                }else{
+                                    mPaint.setColor(adaptation.setCanvasAdaptation(lineColor));
+                                }
+                                mCanvas.drawRect(titleRightXDistance-adaptation.setCanvasAdaptation(titleRightRectangleWidth),
+                                        adaptation.setCanvasAdaptation(getTitleHeight())/2-getTextWH(dataTitleRightText[i],mPaint2).height()/2-adaptation.setCanvasAdaptation(10),
+                                        titleRightXDistance,
+                                        adaptation.setCanvasAdaptation(getTitleHeight())/2+getTextWH(dataTitleRightText[i],mPaint2).height()/2-adaptation.setCanvasAdaptation(10), mPaint);// 正方形
+                                titleRightXDistance -= adaptation.setCanvasAdaptation(titleRightRectangleWidth)+adaptation.setCanvasAdaptation(titleRightTextBetweenDistance);
+                            }
+                        }
+                    }
+                    //绘制阶段目标值的描述
+                    if(setTargetValueTitleRightText!=null){
+                        for (int i = 0; i < targetValueDouble.size(); i++) {
+                            //绘制字
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            mPaint.setColor(titleRightTextColor);
+                            mPaint.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
+                            mCanvas.drawText(setTargetValueTitleRightText[i],titleRightXDistance-getTextWH(setTargetValueTitleRightText[i],mPaint).width(),
+                                    adaptation.setCanvasAdaptation(getTitleHeight())/2+adaptation.setCanvasAdaptation(5),mPaint);
+                            titleRightXDistance -= getTextWH(setTargetValueTitleRightText[i],mPaint).width()+adaptation.setCanvasAdaptation(titleRightTextlineDistance);
+                            //绘制右上角小折线
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                            if(targetValueColor!=null){
+                                if(targetValueDouble.size() == targetValueColor.length){
+                                    mPaint.setColor(targetValueColor[i]);
+                                }
+                            }else{
+                                mPaint.setColor(targeValueColor);
+                            }
+                            mCanvas.drawLine(titleRightXDistance, adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                    titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                            mCanvas.drawLine(titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,
+                                    titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),mPaint);
+                            mCanvas.drawLine(titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                    titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*3), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                            titleRightXDistance -= adaptation.setCanvasAdaptation(titleRightLineMin)*3+adaptation.setCanvasAdaptation(titleRightTextBetweenDistance);
+                        }
+                    }
+                    //绘制总目标值的描述
+                    if(totalTargetTitleRightText!=null){
+                        for (int i = 0; i < totalTargetValueDouble.length; i++) {
+                            //绘制字
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            mPaint.setColor(titleRightTextColor);
+                            mPaint.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
+                            mCanvas.drawText(totalTargetTitleRightText[i],titleRightXDistance-getTextWH(totalTargetTitleRightText[i],mPaint).width(),
+                                    adaptation.setCanvasAdaptation(getTitleHeight())/2+adaptation.setCanvasAdaptation(5),mPaint);
+                            titleRightXDistance -= getTextWH(dataTitleRightText[i],mPaint).width()+adaptation.setCanvasAdaptation(titleRightTextlineDistance);
+                            //绘制右上角小折线
+                            mPaint = new Paint();
+                            mPaint.setAntiAlias(true);
+                            mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(lineWidth));
+                            if(totalTargetValueColor!=null){
+                                if(totalTargetValueDouble.length == totalTargetValueColor.length){
+                                    mPaint.setColor(totalTargetValueColor[i]);
+                                }
+                            }else{
+                                mPaint.setColor(adaptation.setCanvasAdaptation(lineColor));
+                            }
+                            mCanvas.drawLine(titleRightXDistance, adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                    titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                            mCanvas.drawLine(titleRightXDistance-adaptation.setCanvasAdaptation(titleRightLineMin), adaptation.setCanvasAdaptation(getTitleHeight())/2,
+                                    titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),mPaint);
+                            mCanvas.drawLine(titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*2), adaptation.setCanvasAdaptation(getTitleHeight()/2-10),
+                                    titleRightXDistance-(adaptation.setCanvasAdaptation(titleRightLineMin)*3), adaptation.setCanvasAdaptation(getTitleHeight())/2,mPaint);
+                            titleRightXDistance -= adaptation.setCanvasAdaptation(titleRightLineMin)*3+adaptation.setCanvasAdaptation(titleRightTextBetweenDistance);
+                        }
+                    }
+                }
+            }
         }
         if(dataSize<=DataXY.length-1){
             dataSize ++;
@@ -440,15 +700,26 @@ public class StraightLineView extends BaseDrawGridView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        XdataYEndList = new ArrayList<>();
-        int[] XdataYEnd;
         if(Xdata!=null){
+            int[] XdataYEnd;
+            XdataYEndList = new ArrayList<>();
             for (int i = 0; i < Xdata.size(); i++) {
                 XdataYEnd = new int[Xdata.get(i).length];
                 for (int i1 = 0; i1 < Xdata.get(i).length; i1++) {
                     XdataYEnd[i1] = Xdata.get(i)[i1];
                 }
                 XdataYEndList.add(XdataYEnd);
+            }
+        }
+        if(XdataDouble!=null){
+            double[] XdataYEnd;
+            XdataYEndListDouble = new ArrayList<>();
+            for (int i = 0; i < XdataDouble.size(); i++) {
+                XdataYEnd = new double[XdataDouble.get(i).length];
+                for (int i1 = 0; i1 < XdataDouble.get(i).length; i1++) {
+                    XdataYEnd[i1] = XdataDouble.get(i)[i1];
+                }
+                XdataYEndListDouble.add(XdataYEnd);
             }
         }
     }
@@ -495,6 +766,13 @@ public class StraightLineView extends BaseDrawGridView {
         targetValue = value;
     }
     /**
+     * 设置每阶段目标值
+     * @param value
+     */
+    public void setTargetValueDouble(List<double[]> value){
+        targetValueDouble = value;
+    }
+    /**
      * 设置每阶段目标值颜色
      * @param color
      */
@@ -516,6 +794,13 @@ public class StraightLineView extends BaseDrawGridView {
         totalTargetValue = value;
     }
     /**
+     * 设置总目标值
+     * @param value
+     */
+    public void settotalTargetValue(double[] value){
+        totalTargetValueDouble = value;
+    }
+    /**
      * 设置数据折线颜色
      * @param color
      */
@@ -528,6 +813,13 @@ public class StraightLineView extends BaseDrawGridView {
      */
     public void setXData(List<int[]> data){
         Xdata = data;
+    }
+    /**
+     * 设置X轴的数据
+     * @param data
+     */
+    public void setXDataDouble(List<double[]> data){
+        XdataDouble = data;
     }
 
     /**

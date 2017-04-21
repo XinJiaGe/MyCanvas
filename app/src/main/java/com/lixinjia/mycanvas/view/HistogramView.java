@@ -60,7 +60,7 @@ public class HistogramView extends BaseDrawGridView {
     /**
      * 是否可以点击查看
      */
-    private boolean dataClick = true;
+    private boolean dataClick = false;
     /**
      * 点击的是哪个柱
      */

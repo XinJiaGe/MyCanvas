@@ -4,18 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.lixinjia.mycanvas.R;
 import com.lixinjia.mycanvas.adapter.AdaptiveHorizontalLayoutAdapter;
+import com.lixinjia.mycanvas.adapter.LateralSlidingSeletionAdapter;
 import com.lixinjia.mycanvas.surface.MySurfaceView;
 import com.lixinjia.mycanvas.tool.Adaptation;
 import com.lixinjia.mycanvas.view.AdaptiveHorizontalLayoutView;
-import com.lixinjia.mycanvas.view.BaseDrawGridView;
 import com.lixinjia.mycanvas.view.LateralSlidingSelectionView;
 import com.lixinjia.mycanvas.view.HistogramView;
 import com.lixinjia.mycanvas.view.LateralSlidingSelectionViewListener;
@@ -29,7 +29,6 @@ import com.lixinjia.mycanvas.view.StraightLineView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends Activity {
 
@@ -46,11 +45,10 @@ public class MainActivity extends Activity {
     private LinearLayout linearLayout;
     private int width;
     private int height;
-    private LateralSlidingSelectionView baaa;
+    private LateralSlidingSelectionView selectView;
     private int index = 0;
     private PieChartView pieChartView;
     private MySurfaceView mySurfaceView;
-    private AdaptiveHorizontalLayoutView horizontalLayoutView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +59,6 @@ public class MainActivity extends Activity {
         linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
         init();
         jiazaiData();
-    }
-    public void zsyhorizontalqiehuan(View view){
-        zsyhorizontalqiehuan();
     }
     public void zsyhorizontal(View view){
         zsyhorizontalView();
@@ -96,42 +91,33 @@ public class MainActivity extends Activity {
         qinKong();
     }
 
-    private void zsyhorizontalqiehuan(){
-        if(horizontalLayoutView!=null){
-            if(horizontalLayoutView.isALine()){
-                horizontalLayoutView.setALine(false);
-            }else{
-                horizontalLayoutView.setALine(true);
-            }
-            horizontalLayoutView.updataView();
-        }
-    }
     private void zsyhorizontalView(){
-        horizontalLayoutView = new AdaptiveHorizontalLayoutView(this);
+        AdaptiveHorizontalLayoutView horizontalLayoutView = new AdaptiveHorizontalLayoutView(this);
         horizontalLayoutView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
         List<String> list = new ArrayList<>();
-        list.add("士大夫的撒");
-        list.add("大");
-        list.add("大师傅");
-        list.add("大按时");
-        list.add("大厦");
-        list.add("阿道夫按时按时");
-        list.add("阿斯顿发d");
-        list.add("大");
-        list.add("大厦法定");
-        list.add("大阿凡达");
-        list.add(" 阿道夫");
-        list.add("啊大");
-        list.add("阿萨水电费十大大");
-        list.add("大法定啊");
+        list.add("1243214");
+        list.add("21432143");
+        list.add("14314");
+        list.add("14314");
+        list.add("32");
+        list.add("1");
+        list.add("243143");
+        list.add("3143");
+        list.add("43");
+        list.add("32143");
+        list.add("143");
+        list.add("3143");
+        list.add("4314");
+        list.add("66");
         list.add("阿10000凡达");
-        list.add("按时发生");
+        list.add("74");
         list.add("订单");
-        list.add("按时大法师大");
+        list.add("85");
         list.add("大法师大厦");
-        list.add("啊啊大发生大阿福大厦");
+        list.add("6");
         AdaptiveHorizontalLayoutAdapter adaptiveHorizontalLayoutAdapter = new AdaptiveHorizontalLayoutAdapter(this, list);
         horizontalLayoutView.setAdapter(adaptiveHorizontalLayoutAdapter);
+        horizontalLayoutView.startCanvase();
         linearLayout.addView(horizontalLayoutView);
     }
     private void gameView(){
@@ -146,11 +132,11 @@ public class MainActivity extends Activity {
         pieChartView.setTitle(true);
         pieChartView.setTitleHeights(140);
 
-        double[] data = new double[4];
-        data[0] = 20.5;
-        data[1] = 30;
-        data[2] = 40;
-        data[3] = 10.5;
+        String[] data = new String[4];
+        data[0] = "20.5";
+        data[1] = "30";
+        data[2] = "40";
+        data[3] = "10.5";
         pieChartView.setData(data);
         String[] text = new String[4];
         text[0] = "白痴";
@@ -168,44 +154,49 @@ public class MainActivity extends Activity {
     }
     private void gunDong2(){
         //滑动菜单
-        baaa = new LateralSlidingSelectionView(this);
-        baaa.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width/4));
-        baaa.setmIndex(index);
-        final String[] text = new String[5];
-        text[0] = "不知道";
-        text[1] = "小碗";
-        text[2] = "好";
-        text[3] = "不可以";
-        text[4] = "分钟";
-        baaa.setMyOnListener(new LateralSlidingSelectionViewListener() {
-            @Override
-            public void slideIn(boolean isSlide, int index) {
-                Toast.makeText(MainActivity.this,isSlide+"   "+index,Toast.LENGTH_SHORT).show();
-            }
-
+        selectView = new LateralSlidingSelectionView(this);
+        selectView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width/4));
+        selectView.setmIndex(index);//默认为0
+        final String[] text = new String[10];
+        text[0] = "可以";
+        text[1] = "可以大发";
+        text[2] = "可以大发";
+        text[3] = "可以大发";
+        text[4] = "可以范德萨发";
+        text[5] = "可以范德萨发";
+        text[6] = "可以范德萨发";
+        text[7] = "可";
+        text[8] = "可";
+        text[9] = "可以大";
+        final LateralSlidingSeletionAdapter adapter = new LateralSlidingSeletionAdapter(this,text);
+        selectView.setMyOnListener(new LateralSlidingSelectionViewListener() {
             @Override
             public void click(int index) {
-//                Toast.makeText(MainActivity.this,text[index],Toast.LENGTH_SHORT).show();
+                Log.d("LateralSlidingSelection2View",text[index]);
+                adapter.setSelectIndex(index);
+                adapter.notifyDataSetChanged();
+                selectView.updataAdapter(adapter);
             }
         });
-        baaa.setText(text);
-        linearLayout.addView(baaa);
+        selectView.setAdapter(adapter);
+        selectView.startCanvase();
+        linearLayout.addView(selectView);
         index ++ ;
     }
     private void yuanZheng(){
         //圆形指针
         pieChartPointer = new PieChartPointerView(this);
         pieChartPointer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width+width/7));
-        pieChartPointer.setPointerData(30);
+        pieChartPointer.setPointerData("30");
         pieChartPointer.setTitle("BmI");
         pieChartPointer.setTitle2("健康体重");
         pieChartPointer.setDynamic(true);
-        int[] text6 = new int[5];
-        text6[0] = 10;
-        text6[1] = 18;
-        text6[2] = 24;
-        text6[3] = 28;
-        text6[4] = 40;
+        String[] text6 = new String[5];
+        text6[0] = "10";
+        text6[1] = "18";
+        text6[2] = "24";
+        text6[3] = "28";
+        text6[4] = "40";
         pieChartPointer.setData(text6);
         int[] color = new int[4];
         color[0] = Color.parseColor("#FBD84F");
@@ -731,91 +722,91 @@ public class MainActivity extends Activity {
         //柱状图
         histogramView = new HistogramView(this);
         histogramView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
-//        //数据
-//        String[] data = new String[24];
-//        data[0] = "0";
-//        data[1] = "0";
-//        data[2] = "90";
-//        data[3] = "0";
-//        data[4] = "0";
-//        data[5] = "6000";
-//        data[6] = "0";
-//        data[7] = "0";
-//        data[8] = "8000";
-//        data[9] = "0";
-//        data[10] = "3000";
-//        data[11] = "0";
-//        data[12] = "0";
-//        data[13] = "10895";
-//        data[14] = "0";
-//        data[15] = "1314";
-//        data[16] = "0";
-//        data[17] = "0";
-//        data[18] = "15897";
-//        data[19] = "0";
-//        data[20] = "7000";
-//        data[21] = "0";
-//        data[22] = "80";
-//        data[23] = "0";
-//        histogramView.setXData(data);
-//
-//        histogramView.setYValueMax(adaptation.getValueMaxLargeValue(adaptation.getValueMaxMin(data).get("max")));
-//
-//        //X轴描述
-//        String[] text = new String[24];
-//        text[0] = "";
-//        text[1] = "";
-//        text[2] = "";
-//        text[3] = "";
-//        text[4] = "";
-//        text[5] = "6:00";
-//        text[6] = "";
-//        text[7] = "";
-//        text[8] = "";
-//        text[9] = "";
-//        text[10] = "";
-//        text[11] = "12:00";
-//        text[12] = "";
-//        text[13] = "";
-//        text[14] = "";
-//        text[15] = "";
-//        text[16] = "";
-//        text[17] = "18:00";
-//        text[18] = "";
-//        text[19] = "";
-//        text[20] = "";
-//        text[21] = "";
-//        text[22] = "";
-//        text[23] = "24:00";
-//        histogramView.setXText(text);
-//        //是否显示Y轴数据对应的网格
-//        Boolean[] isBrokenX = new Boolean[24];
-//        isBrokenX[0] = true;
-//        isBrokenX[1] = false;
-//        isBrokenX[2] = false;
-//        isBrokenX[3] = false;
-//        isBrokenX[4] = false;
-//        isBrokenX[5] = true;
-//        isBrokenX[6] = false;
-//        isBrokenX[7] = false;
-//        isBrokenX[8] = false;
-//        isBrokenX[9] = false;
-//        isBrokenX[10] = false;
-//        isBrokenX[11] = true;
-//        isBrokenX[12] = false;
-//        isBrokenX[13] = false;
-//        isBrokenX[14] = false;
-//        isBrokenX[15] = false;
-//        isBrokenX[16] = false;
-//        isBrokenX[17] = true;
-//        isBrokenX[18] = false;
-//        isBrokenX[19] = false;
-//        isBrokenX[20] = false;
-//        isBrokenX[21] = false;
-//        isBrokenX[22] = false;
-//        isBrokenX[23] = true;
-//        histogramView.setIsBrokenX(isBrokenX);
-//        histogramView.setDataText(true);
+        //数据
+        String[] data = new String[24];
+        data[0] = "0";
+        data[1] = "0";
+        data[2] = "90";
+        data[3] = "0";
+        data[4] = "0";
+        data[5] = "6000";
+        data[6] = "0";
+        data[7] = "0";
+        data[8] = "8000";
+        data[9] = "0";
+        data[10] = "3000";
+        data[11] = "0";
+        data[12] = "0";
+        data[13] = "10895";
+        data[14] = "0";
+        data[15] = "1314";
+        data[16] = "0";
+        data[17] = "0";
+        data[18] = "15897";
+        data[19] = "0";
+        data[20] = "7000";
+        data[21] = "0";
+        data[22] = "80";
+        data[23] = "0";
+        histogramView.setXData(data);
+
+        histogramView.setYValueMax(adaptation.getValueMaxLargeValue(adaptation.getValueMaxMin(data).get("max")));
+
+        //X轴描述
+        String[] text = new String[24];
+        text[0] = "";
+        text[1] = "";
+        text[2] = "";
+        text[3] = "";
+        text[4] = "";
+        text[5] = "6:00";
+        text[6] = "";
+        text[7] = "";
+        text[8] = "";
+        text[9] = "";
+        text[10] = "";
+        text[11] = "12:00";
+        text[12] = "";
+        text[13] = "";
+        text[14] = "";
+        text[15] = "";
+        text[16] = "";
+        text[17] = "18:00";
+        text[18] = "";
+        text[19] = "";
+        text[20] = "";
+        text[21] = "";
+        text[22] = "";
+        text[23] = "24:00";
+        histogramView.setXText(text);
+        //是否显示Y轴数据对应的网格
+        Boolean[] isBrokenX = new Boolean[24];
+        isBrokenX[0] = true;
+        isBrokenX[1] = false;
+        isBrokenX[2] = false;
+        isBrokenX[3] = false;
+        isBrokenX[4] = false;
+        isBrokenX[5] = true;
+        isBrokenX[6] = false;
+        isBrokenX[7] = false;
+        isBrokenX[8] = false;
+        isBrokenX[9] = false;
+        isBrokenX[10] = false;
+        isBrokenX[11] = true;
+        isBrokenX[12] = false;
+        isBrokenX[13] = false;
+        isBrokenX[14] = false;
+        isBrokenX[15] = false;
+        isBrokenX[16] = false;
+        isBrokenX[17] = true;
+        isBrokenX[18] = false;
+        isBrokenX[19] = false;
+        isBrokenX[20] = false;
+        isBrokenX[21] = false;
+        isBrokenX[22] = false;
+        isBrokenX[23] = true;
+        histogramView.setIsBrokenX(isBrokenX);
+        histogramView.setDataText(true);
         linearLayout.addView(histogramView);
     }
     private void qinKong() {

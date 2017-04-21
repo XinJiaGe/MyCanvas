@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 
 import java.util.ArrayList;
@@ -85,7 +86,6 @@ public class SpotLineView extends BaseDrawGridView {
      * 设置title右边字体离圆的距离
      */
     private int titleRightTextRadiusDistance = 30;
-
 
     private List<int[]> Xdata;
     private String[] XText;
@@ -214,34 +214,43 @@ public class SpotLineView extends BaseDrawGridView {
             }
         }
         //绘制title
-        if(Xdata!=null) {
-            if(titleRight){
-                if(titleRightList!=null){
-                    int titleRightRightDistanceStart = getmWidth() - adaptation.setCanvasAdaptation(titleRightRightDistance);
-                    for (HashMap<String, Object> stringObjectHashMap : titleRightList) {
-                        String text = String.valueOf(stringObjectHashMap.get("text"));
-                        String hollow = String.valueOf(stringObjectHashMap.get("hollow"));
-                        int color = (Integer)stringObjectHashMap.get("color");
-                        mPaint = new Paint();
-                        mPaint.setAntiAlias(true);
-                        mPaint.setTextSize(titleRightTextSize);
-                        mPaint.setColor(titleRightTextColor);
-                        titleRightRightDistanceStart -= getTextWH(text,mPaint).width();
-                        mCanvas.drawText(text, adaptation.setCanvasAdaptation(titleRightRightDistanceStart),getTitleHeight()/2+adaptation.setCanvasAdaptation(10),mPaint);
-                        titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(titleRightTextRadiusDistance)+adaptation.setCanvasAdaptation(circularRadius);
+        if(titleRight){
+            if(titleRightList!=null){
+//                mPaint = new Paint();
+//                mPaint.setColor(Color.RED);
+//                mCanvas.drawLine(0,adaptation.setCanvasAdaptation(getTitleHeight()/2),mWidth,adaptation.setCanvasAdaptation(getTitleHeight()/2),mPaint);
+//                mPaint.setStyle(Paint.Style.STROKE);
+//                Path path = new Path();
+//                path.moveTo(0,0);
+//                path.lineTo(mWidth,0);
+//                path.lineTo(mWidth,adaptation.setCanvasAdaptation(getTitleHeight()));
+//                path.lineTo(0,adaptation.setCanvasAdaptation(getTitleHeight()));
+//                path.close();
+//                mCanvas.drawPath(path, mPaint);
+                int titleRightRightDistanceStart = getmWidth() - adaptation.setCanvasAdaptation(titleRightRightDistance);
+                for (HashMap<String, Object> stringObjectHashMap : titleRightList) {
+                    String text = String.valueOf(stringObjectHashMap.get("text"));
+                    String hollow = String.valueOf(stringObjectHashMap.get("hollow"));
+                    int color = (Integer)stringObjectHashMap.get("color");
+                    mPaint = new Paint();
+                    mPaint.setAntiAlias(true);
+                    mPaint.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
+                    mPaint.setColor(titleRightTextColor);
+                    titleRightRightDistanceStart -= getTextWH(text,mPaint).width();
+                    mCanvas.drawText(text, titleRightRightDistanceStart,adaptation.getCanvasTextHeight(mPaint)/2+adaptation.setCanvasAdaptation(getTitleHeights())/2,mPaint);
+                    titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(titleRightTextRadiusDistance)+adaptation.setCanvasAdaptation(circularRadius);
 
-                        mPaint = new Paint();
-                        mPaint.setAntiAlias(true);
-                        mPaint.setStyle(Paint.Style.FILL);//设置填满
-                        mPaint.setAntiAlias(true);// 设置画笔的锯齿效果。 true是去除，大家一看效果就明白了
-                        mPaint.setColor(color);
-                        mCanvas.drawCircle(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(circularRadius), getTitleHeight()/2-getTextWH(text,mPaint).height()/2, adaptation.setCanvasAdaptation(circularRadius), mPaint);
-                        if(hollow.equals("true")){
-                            mPaint.setColor(Color.WHITE);
-                            mCanvas.drawCircle(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(circularRadius), getTitleHeight()/2-getTextWH(text,mPaint).height()/2, adaptation.setCanvasAdaptation(circularRadius)-adaptation.setCanvasAdaptation(circularWight), mPaint);
-                        }
-                        titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(circularRadius)+adaptation.setCanvasAdaptation(titleRightTextRadiusDistance);
+                    mPaint = new Paint();
+                    mPaint.setAntiAlias(true);
+                    mPaint.setStyle(Paint.Style.FILL);//设置填满
+                    mPaint.setAntiAlias(true);// 设置画笔的锯齿效果。 true是去除，大家一看效果就明白了
+                    mPaint.setColor(color);
+                    mCanvas.drawCircle(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(circularRadius), adaptation.setCanvasAdaptation(getTitleHeight())/2, adaptation.setCanvasAdaptation(circularRadius), mPaint);
+                    if(hollow.equals("true")){
+                        mPaint.setColor(Color.WHITE);
+                        mCanvas.drawCircle(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(circularRadius), adaptation.setCanvasAdaptation(getTitleHeight())/2, adaptation.setCanvasAdaptation(circularRadius)-adaptation.setCanvasAdaptation(circularWight), mPaint);
                     }
+                    titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(circularRadius)+adaptation.setCanvasAdaptation(titleRightTextRadiusDistance);
                 }
             }
         }

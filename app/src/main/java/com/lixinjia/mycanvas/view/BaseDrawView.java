@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+
 import com.lixinjia.mycanvas.tool.Adaptation;
 
 import java.io.InputStream;
@@ -27,6 +28,10 @@ public class BaseDrawView extends View {
      * title高度
      */
     private int titleHeights = 0;
+    /**
+     * title下方Y轴字体单位大高度
+     */
+    private int titleBotCompanyHeight = 0;
     /**
      * title左边的文字描述
      */
@@ -128,7 +133,7 @@ public class BaseDrawView extends View {
                     int imgHeight = adaptation.setCanvasAdaptation(titleLeftImgheight);
                     InputStream is = getResources().openRawResource(getTitleLeftImgSrc());
                     Bitmap mBitmap = BitmapFactory.decodeStream(is);
-                    drawImage(mCanvas,mBitmap,adaptation.setCanvasAdaptation(titleLeftImgLeftDistance),(adaptation.setCanvasAdaptation(getTitleHeights())-imgHeight)/2-adaptation.setCanvasAdaptation(5),imgwidth,imgHeight,0,0);
+                    drawImage(mCanvas,mBitmap,adaptation.setCanvasAdaptation(titleLeftImgLeftDistance),(adaptation.setCanvasAdaptation(getTitleHeights())-imgHeight)/2,imgwidth,imgHeight,0,0);
                 }
             }
             //绘制title左边text
@@ -136,12 +141,11 @@ public class BaseDrawView extends View {
             mPaint.setAntiAlias(true);
             mPaint.setTextSize(adaptation.setCanvasAdaptation(titleLeftTextSize));
             mPaint.setColor(titleLeftTextColor);
-            mPaint.setTextAlign(Paint.Align.CENTER);
-            int leftlenght = adaptation.setCanvasAdaptation(titleLeftImgLeftDistance)+getTextWH(titleLeftText,mPaint).width()/2;
+            int leftlenght = adaptation.setCanvasAdaptation(titleLeftImgLeftDistance);
             if(isTitleLeftImag){
-                leftlenght = adaptation.setCanvasAdaptation(titleLeftImgWidth) + adaptation.setCanvasAdaptation(titleLeftImgLeftDistance)+getTextWH(titleLeftText,mPaint).width()/2+adaptation.setCanvasAdaptation(10)+adaptation.setCanvasAdaptation(titleLeftImgTextDistance);
+                leftlenght = adaptation.setCanvasAdaptation(titleLeftImgWidth) + leftlenght+adaptation.setCanvasAdaptation(10)+adaptation.setCanvasAdaptation(titleLeftImgTextDistance);
             }
-            mCanvas.drawText(titleLeftText,leftlenght, (adaptation.setCanvasAdaptation(getTitleHeights())+getTextWH(titleLeftText,mPaint).height())/2-adaptation.setCanvasAdaptation(5),mPaint);
+            mCanvas.drawText(titleLeftText,leftlenght, adaptation.getCanvasTextHeight(mPaint)/2+adaptation.setCanvasAdaptation(getTitleHeights())/2,mPaint);
 
             //绘制title下的分割线
             if(isSplitLine){
@@ -293,6 +297,7 @@ public class BaseDrawView extends View {
         // if you want to rotate the Bitmap
         matrix.postRotate(angle);
         Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width,height, matrix, true);
+
         return resizedBitmap;
     }
     /**
@@ -324,7 +329,7 @@ public class BaseDrawView extends View {
      * @param canvas
      * @param paint
      */
-    protected void setCircleCoordinates(String text , int originX, int originY, int angle, int radius, Canvas canvas, Paint paint){
+    protected void setCircleCoordinates(String text , int originX, int originY, float angle, int radius, Canvas canvas, Paint paint){
         canvas.drawText(text,(int)getCircleCoordinatesX(originX,-angle,radius),(int)getCircleCoordinatesY(originY,-angle,radius)+getTextWH(text,paint).height()/2,paint);
     }
 
@@ -338,6 +343,16 @@ public class BaseDrawView extends View {
     protected double getCircleCoordinatesX(int originX , int angle, int radius){
         return originX + Math.sin(2* Math.PI / 360 * angle) * radius;
     }
+    /**
+     *  根据圆获取圆上的点X轴坐标
+     * @param originX   圆的原点X坐标
+     * @param angle     角度  0 是正下方，逆时针旋转
+     * @param radius    圆的半径
+     * @return          圆上的点的X坐标
+     */
+    protected double getCircleCoordinatesX(int originX , float angle, int radius){
+        return originX + Math.sin(2* Math.PI / 360 * angle) * radius;
+    }
 
     /**
      *  根据圆获取圆上的点Y轴坐标
@@ -347,6 +362,16 @@ public class BaseDrawView extends View {
      * @return          圆上的点的Y坐标
      */
     protected double getCircleCoordinatesY(int originY , int angle, int radius){
+        return originY + Math.cos(2* Math.PI / 360 * angle) * radius;
+    }
+    /**
+     *  根据圆获取圆上的点Y轴坐标
+     * @param originY   圆的原点Y坐标
+     * @param angle     角度  0 是正下方，逆时针旋转
+     * @param radius    圆的半径
+     * @return          圆上的点的Y坐标
+     */
+    protected double getCircleCoordinatesY(int originY , float angle, int radius){
         return originY + Math.cos(2* Math.PI / 360 * angle) * radius;
     }
 
@@ -496,5 +521,13 @@ public class BaseDrawView extends View {
 
     public void setSplitLineWidth(int splitLineWidth) {
         this.splitLineWidth = splitLineWidth;
+    }
+
+    public int getTitleBotCompanyHeight() {
+        return titleBotCompanyHeight;
+    }
+
+    public void setTitleBotCompanyHeight(int titleBotCompanyHeight) {
+        this.titleBotCompanyHeight = titleBotCompanyHeight;
     }
 }

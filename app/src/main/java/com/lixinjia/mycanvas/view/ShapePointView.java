@@ -80,6 +80,9 @@ public class ShapePointView extends BaseDrawGridView {
     private int[] CircularData = null;
     private int[] CircularDataColor = null;
     private List<HashMap<String, Object>> titleRightList;
+    private String[] TriangleDataString;
+    private String[] CircularDataString;
+    private String[] SquareDataString;
 
     public ShapePointView(Context context) {
         super(context);
@@ -128,6 +131,26 @@ public class ShapePointView extends BaseDrawGridView {
                             setDataText(DataXY[i],getYValue(TriangleData[i]),TriangleData[i],adaptation.setCanvasAdaptation(triangleBottomLong),dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
                         }
                     }
+                }else{
+                    if(TriangleDataString!=null){
+                        if(!TriangleDataString[i].equals("0")&&!TriangleDataString[i].equals("")){
+                            if(TriangleDataColor!=null&&TriangleDataColor[i]!=0){
+                                mPaint.setColor(TriangleDataColor[i]);
+                            }else{
+                                mPaint.setColor(triangleColor);
+                            }
+                            Path path = new Path();
+                            path.moveTo(DataXY[i]-adaptation.setCanvasAdaptation(triangleBottomLong)/2, getYValue(TriangleDataString[i])+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));// 此点为多边形的起点
+                            path.lineTo(DataXY[i], getYValue(TriangleDataString[i])-adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
+                            path.lineTo(DataXY[i]+adaptation.setCanvasAdaptation(triangleBottomLong)/2, getYValue(TriangleDataString[i])+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
+                            path.close(); // 使这些点构成封闭的多边形
+                            mCanvas.drawPath(path, mPaint);
+                            //绘制三角形上的text
+                            if(dataText){
+                                setDataText(DataXY[i],getYValue(TriangleDataString[i]),TriangleDataString[i],adaptation.setCanvasAdaptation(triangleBottomLong),dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
+                            }
+                        }
+                    }
                 }
                 //绘制正方形
                 if(SquareData!=null){
@@ -149,6 +172,25 @@ public class ShapePointView extends BaseDrawGridView {
                             setDataText(DataXY[i],getYValue(SquareData[i]),SquareData[i],adaptation.setCanvasAdaptation(squareBottomLong),dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
                         }
                     }
+                }else{
+                    if(SquareDataString!=null&&!SquareDataString[i].equals("0")&&!SquareDataString[i].equals("")){
+                        if(SquareDataColor!=null&&SquareDataColor[i]!=0){
+                            mPaint.setColor(SquareDataColor[i]);
+                        }else{
+                            mPaint.setColor(squareColor);
+                        }
+                        Path path = new Path();
+                        path.moveTo(DataXY[i]-adaptation.setCanvasAdaptation(squareBottomLong)/2, getYValue(SquareDataString[i])+adaptation.setCanvasAdaptation(squareBottomLong)/2);// 此点为多边形的起点
+                        path.lineTo(DataXY[i]-adaptation.setCanvasAdaptation(squareBottomLong)/2, getYValue(SquareDataString[i])-adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                        path.lineTo(DataXY[i]+adaptation.setCanvasAdaptation(squareBottomLong)/2, getYValue(SquareDataString[i])-adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                        path.lineTo(DataXY[i]+adaptation.setCanvasAdaptation(squareBottomLong)/2, getYValue(SquareDataString[i])+adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                        path.close(); // 使这些点构成封闭的多边形
+                        mCanvas.drawPath(path, mPaint);
+                        //绘制正方形上的text
+                        if(dataText){
+                            setDataText(DataXY[i],getYValue(SquareDataString[i]),SquareDataString[i],adaptation.setCanvasAdaptation(squareBottomLong),dataTextColor,adaptation.setCanvasAdaptation(dataTextSize));
+                        }
+                    }
                 }
                 //绘制圆形
                 if(CircularData!=null){
@@ -162,6 +204,18 @@ public class ShapePointView extends BaseDrawGridView {
                         //绘制圆形上的text
                         if(dataText) {
                             setDataText(DataXY[i], getYValue(CircularData[i]), CircularData[i], adaptation.setCanvasAdaptation(circularRadius), dataTextColor, adaptation.setCanvasAdaptation(dataTextSize));
+                        }}
+                }else{
+                    if(CircularDataString!=null&&!CircularDataString[i].equals("0")&&!CircularDataString[i].equals("")){
+                        if(CircularDataColor!=null&&CircularDataColor[i]!=0){
+                            mPaint.setColor(CircularDataColor[i]);
+                        }else{
+                            mPaint.setColor(circularColor);
+                        }
+                        mCanvas.drawCircle(DataXY[i], getYValue(CircularDataString[i]), adaptation.setCanvasAdaptation(circularRadius), mPaint);
+                        //绘制圆形上的text
+                        if(dataText) {
+                            setDataText(DataXY[i], getYValue(CircularDataString[i]), CircularDataString[i], adaptation.setCanvasAdaptation(circularRadius), dataTextColor, adaptation.setCanvasAdaptation(dataTextSize));
                         }
                     }
                 }
@@ -169,6 +223,17 @@ public class ShapePointView extends BaseDrawGridView {
         }
         if(titleRight){
             if(titleRightList!=null){
+//                mPaint = new Paint();
+//                mPaint.setColor(Color.RED);
+//                mCanvas.drawLine(0,adaptation.setCanvasAdaptation(getTitleHeight()/2),mWidth,adaptation.setCanvasAdaptation(getTitleHeight()/2),mPaint);
+//                mPaint.setStyle(Paint.Style.STROKE);
+//                Path path3 = new Path();
+//                path3.moveTo(0,0);
+//                path3.lineTo(mWidth,0);
+//                path3.lineTo(mWidth,adaptation.setCanvasAdaptation(getTitleHeight()));
+//                path3.lineTo(0,adaptation.setCanvasAdaptation(getTitleHeight()));
+//                path3.close();
+//                mCanvas.drawPath(path3, mPaint);
                 int titleRightRightDistanceStart = getmWidth() - adaptation.setCanvasAdaptation(titleRightRightDistance);
                 for (HashMap<String, Object> stringObjectHashMap : titleRightList) {
                     String text = String.valueOf(stringObjectHashMap.get("text"));
@@ -176,33 +241,32 @@ public class ShapePointView extends BaseDrawGridView {
                     int color = (Integer)stringObjectHashMap.get("color");
                     mPaint = new Paint();
                     mPaint.setAntiAlias(true);
-                    mPaint.setTextSize(titleRightTextSize);
+                    mPaint.setTextSize(adaptation.setCanvasAdaptation(titleRightTextSize));
                     mPaint.setColor(titleRightTextColor);
                     titleRightRightDistanceStart -= getTextWH(text,mPaint).width();
-                    mCanvas.drawText(text, adaptation.setCanvasAdaptation(titleRightRightDistanceStart),getTitleHeight()/2+adaptation.setCanvasAdaptation(10),mPaint);
+                    mCanvas.drawText(text, titleRightRightDistanceStart,adaptation.getCanvasTextHeight(mPaint)/2+adaptation.setCanvasAdaptation(getTitleHeights())/2,mPaint);
                     titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(20);
 
                     mPaint.setStyle(Paint.Style.FILL);//设置填满
                     mPaint.setColor(color);
                     switch (type) {
                         case "1":
-                            mCanvas.drawCircle(titleRightRightDistanceStart, getTitleHeight()/2, adaptation.setCanvasAdaptation(circularRadius), mPaint);
+                            mCanvas.drawCircle(titleRightRightDistanceStart, adaptation.setCanvasAdaptation(getTitleHeight()/2), adaptation.setCanvasAdaptation(circularRadius), mPaint);
                             break;
                         case "2":
                             Path path = new Path();
-                            path.moveTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(squareBottomLong)/2, getTitleHeight()/2+adaptation.setCanvasAdaptation(squareBottomLong)/2);// 此点为多边形的起点
-                            path.lineTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(squareBottomLong)/2, getTitleHeight()/2-adaptation.setCanvasAdaptation(squareBottomLong)/2);
-                            path.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(squareBottomLong)/2, getTitleHeight()/2-adaptation.setCanvasAdaptation(squareBottomLong)/2);
-                            path.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(squareBottomLong)/2, getTitleHeight()/2+adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                            path.moveTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(squareBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)+adaptation.setCanvasAdaptation(squareBottomLong)/2);// 此点为多边形的起点
+                            path.lineTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(squareBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)-adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                            path.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(squareBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)-adaptation.setCanvasAdaptation(squareBottomLong)/2);
+                            path.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(squareBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)+adaptation.setCanvasAdaptation(squareBottomLong)/2);
                             path.close(); // 使这些点构成封闭的多边形
                             mCanvas.drawPath(path, mPaint);
                             break;
                         case "3":
-
                             Path path2 = new Path();
-                            path2.moveTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(triangleBottomLong)/2, getTitleHeight()/2+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));// 此点为多边形的起点
-                            path2.lineTo(titleRightRightDistanceStart, getTitleHeight()/2-adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
-                            path2.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(triangleBottomLong)/2, getTitleHeight()/2+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
+                            path2.moveTo(titleRightRightDistanceStart-adaptation.setCanvasAdaptation(triangleBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));// 此点为多边形的起点
+                            path2.lineTo(titleRightRightDistanceStart, adaptation.setCanvasAdaptation(getTitleHeight()/2)-adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
+                            path2.lineTo(titleRightRightDistanceStart+adaptation.setCanvasAdaptation(triangleBottomLong)/2, adaptation.setCanvasAdaptation(getTitleHeight()/2)+adaptation.setCanvasAdaptation(triangleBottomLong)/2-adaptation.setCanvasAdaptation(3));
                             path2.close(); // 使这些点构成封闭的多边形
                             mCanvas.drawPath(path2, mPaint);
                             break;
@@ -226,6 +290,12 @@ public class ShapePointView extends BaseDrawGridView {
         CircularData = data;
     }
     /**
+     * 设置圆形数据
+     */
+    public void setCircularDataString(String[] data){
+        CircularDataString = data;
+    }
+    /**
      * 设置圆形数据的颜色
      */
     public void setCircularDataColor(int[] color){
@@ -238,6 +308,12 @@ public class ShapePointView extends BaseDrawGridView {
         SquareData = data;
     }
     /**
+     * 设置正方形数据
+     */
+    public void setSquareDataString(String[] data){
+        SquareDataString = data;
+    }
+    /**
      * 设置正方形数据的颜色
      */
     public void setSquareDataColor(int[] color){
@@ -248,6 +324,12 @@ public class ShapePointView extends BaseDrawGridView {
      */
     public void setTriangleData(int[] data){
         TriangleData = data;
+    }
+    /**
+     * 设置三角形数据
+     */
+    public void setTriangleDataString(String[] data){
+        TriangleDataString = data;
     }
     /**
      * 设置三角形数据的颜色

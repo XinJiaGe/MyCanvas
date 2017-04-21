@@ -22,6 +22,8 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
     private int mWidth;
     private AdaptiveHorizontalLayoutView ins;
     private boolean isALine = true; //是否只显示一行
+    private onMyClickListener mListener;
+    private towLineListener mTowLineListener;
 
     public AdaptiveHorizontalLayoutView(Context context) {
         super(context);
@@ -41,21 +43,31 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
         mContext = context;
         ins = this;
         setOrientation(LinearLayout.VERTICAL);
-        ins.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+    }
+    public void startCanvase(){
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mWidth = ins.getWidth();
-                getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 updataView();
+                getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
         });
     }
-
     /**
      * 初始化view
      */
     public void updataView() {
         if(adapter!=null) {
+            startIndex = 0;
+            removeAllViews();
+            endIndex = adapter.getCount();
+            addMyView(startIndex);
+        }
+    }
+    public void updataView(Adapter adapter) {
+        if(adapter!=null) {
+            this.adapter = adapter;
             startIndex = 0;
             removeAllViews();
             endIndex = adapter.getCount();
@@ -75,6 +87,15 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
         addView(linearLayout);
         for (int i = intStartIndex; i < endIndex; i++) {
             View v = adapter.getView(i, null, null);
+            if(mListener!=null){
+                final int finalI = i;
+                v.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onClick(finalI,v);
+                    }
+                });
+            }
             //绑定Adapter的数据到LinearLayout布局
             linearLayout.addView(v);
             if(i<endIndex-1){
@@ -82,6 +103,9 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
                 int nextIndex = i+1;
                 int nextWidth = getViewWidth(adapter.getView(nextIndex, null, null));
                 if(llWidth+nextWidth>mWidth){
+                    if(mTowLineListener!=null){
+                        mTowLineListener.onTowLine();
+                    }
                     if(isALine){
                         break;
                     }else{
@@ -116,7 +140,12 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
         int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         v.measure(w, h);
     }
-
+    public void setOnMyClickListener(onMyClickListener listener){
+        this.mListener = listener;
+    }
+    public interface onMyClickListener{
+        public void onClick(int index, View view);
+    }
     /**
      * 设置adapter
      * @param adapter
@@ -131,5 +160,12 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
 
     public void setALine(boolean ALine) {
         isALine = ALine;
+    }
+
+    public void setTowLineListener(towLineListener lineListener){
+        this.mTowLineListener = lineListener;
+    }
+    public interface towLineListener{
+        public void onTowLine();
     }
 }

@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.lixinjia.mycanvas.R;
+import com.lixinjia.mycanvas.util.DecimalUtils;
 
 
 /**
@@ -52,7 +53,7 @@ public class PieChartPointerView extends BaseDrawCakeView {
     /**
      * 数据描述字体大小
      */
-    private int dataDescribeTextSize = 90;
+    private int dataDescribeTextSize = 100;
     /**
      * 数据描述离圆点下方横线的距离
      */
@@ -72,11 +73,11 @@ public class PieChartPointerView extends BaseDrawCakeView {
     /**
      * 指针开始旋转的数据
      */
-    private int pointerStartData = 0;
+    private double pointerStartData = 0;
     /**
      * 指针数据
      */
-    private int pointerData = 0;
+    private String pointerData = "0";
     /**
      * 是否动态加载
      */
@@ -116,7 +117,7 @@ public class PieChartPointerView extends BaseDrawCakeView {
     /**
      * title2 字体大小
      */
-    private int title2Size = 50;
+    private int title2Size = 60;
 
     /**
      * title2 离横线的距离
@@ -124,12 +125,29 @@ public class PieChartPointerView extends BaseDrawCakeView {
     private int title2Line = 10;
 
 
-    private int[] mData;
-    private int dataTotal = 0;
-    private int[] mDataColor;
-    private int[] dataAngle;
-    private String[] mDataDescribe;
+    /**
+     * 设置title右边离屏幕右边距离
+     */
+    private int titleRightRightDistance = 30;
+    /**
+     * 设置title右边字体离圆的距离
+     */
+    private int titleRightTextRadiusDistance = 30;
+    /**
+     * 左右缩小多少距离
+     */
+    private int leftRightDistace = 20;
+    /**
+     * 设置title右边字体的颜色
+     */
+    private int titleRightTextColor = Color.GRAY;
 
+    private String[] mData;
+    private float dataTotal = 0;
+    private int[] mDataColor;
+    private float[] dataAngle;
+    private String[] mDataDescribe;
+    private String pointerDataString = "0";
 
     public PieChartPointerView(Context context) {
         super(context);
@@ -144,17 +162,60 @@ public class PieChartPointerView extends BaseDrawCakeView {
     }
 
     @Override
+    protected void init(Context context) {
+        super.init(context);
+
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        mPaint.setTextSize(adaptation.setCanvasAdaptation(textSize));
+        if(mDataDescribe!=null){
+            mPaint.setTextAlign(Paint.Align.RIGHT);
+            int titleRightRightDistanceStart = getWidth() - adaptation.setCanvasAdaptation(titleRightRightDistance);
+            for (int i = 0; i < mDataDescribe.length; i++) {
+                mPaint.setColor(titleRightTextColor);
+                mCanvas.drawText(mDataDescribe[i],titleRightRightDistanceStart,getTitleHeights()/2+adaptation.setCanvasAdaptation(10),mPaint);
+                titleRightRightDistanceStart -= getTextWH(mDataDescribe[i],mPaint).width()+adaptation.setCanvasAdaptation(titleRightTextRadiusDistance);
+                if(mDataColor!=null){
+                    if(i<mDataColor.length){
+                        mPaint.setColor(mDataColor[i]);
+                    }
+                }
+                mCanvas.drawCircle(titleRightRightDistanceStart, getTitleHeights()/2, adaptation.setCanvasAdaptation(15), mPaint);// 圆
+                titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(20)+adaptation.setCanvasAdaptation(titleRightTextRadiusDistance);
+            }
+        }
+
+        if(pointerData.equals("0")){
+            try {
+                pointerData = pointerDataString.equals("0")?"0":pointerDataString;;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
         //是否动态加载柱子
         if(!isDynamic){
-            pointerStartData = pointerData;
+            pointerStartData = Double.parseDouble(pointerData);
         }
-        int jiao = ((360 - openingAngle) * (pointerStartData-mData[0]) / dataTotal)+openingAngle/2;
-        radius = getOriginX() - adaptation.setCanvasAdaptation(100);
+        double jiao = ((360 - openingAngle) * (pointerStartData- Double.parseDouble(mData[0])) / dataTotal)+openingAngle/2;
+        if(jiao<0){
+            jiao = 0;
+        }
+        if(jiao>360-openingAngle){
+            jiao = 360-openingAngle;
+        }
+        if(getOriginX()>getOriginY()){
+            radius = getOriginY() - adaptation.setCanvasAdaptation(leftRightDistace)-getTitleHeights()/2+adaptation.setCanvasAdaptation(20);
+        }else{
+            radius = getOriginX() - adaptation.setCanvasAdaptation(leftRightDistace)-getTitleHeights()/2+adaptation.setCanvasAdaptation(20);
+        }
+        int x = getOriginX();
+        int y = getOriginY()+getTitleHeights()/2;
         mPaint.setColor(Color.BLACK);
         // 设置个新的长方形，扫描测量
-        RectF oval = new RectF(getOriginX()-radius, getOriginY()-radius, getOriginX()+radius, getOriginY()+radius);
+        RectF oval = new RectF(x-radius, y-radius, x+radius, y+radius);
         for (int i = 0; i < mData.length; i++) {
             if(mDataColor != null){
                 if(i<mDataColor.length){
@@ -165,90 +226,81 @@ public class PieChartPointerView extends BaseDrawCakeView {
             if(i<mData.length-1){
                 mCanvas.drawArc(oval, dataAngle[i], dataAngle[i+1]-dataAngle[i], true, mPaint);
             }
-            if(pointerStartData!=mData[i]){
+//            if(pointerStartData!=mData[i]){
                 //画弧对应的text
                 mPaint.setColor(textColor);
                 mPaint.setTextSize(adaptation.setCanvasAdaptation(textSize));
                 mPaint.setTextAlign(Paint.Align.CENTER);
-                drawRotateText(mCanvas,mData[i]+"",(int)getCircleCoordinatesX(getOriginX(),-(dataAngle[i]-90),radius+adaptation.setCanvasAdaptation(textIntervalRing)),
-                        (int)getCircleCoordinatesY(getOriginY(),-(dataAngle[i]-90),radius+adaptation.setCanvasAdaptation(textIntervalRing)),mPaint,(dataAngle[i]-90)+180);
-            }
+                drawRotateText(mCanvas,mData[i]+"",(int)getCircleCoordinatesX(x,-(dataAngle[i]-90),radius+adaptation.setCanvasAdaptation(textIntervalRing)),
+                        (int)getCircleCoordinatesY(y,-(dataAngle[i]-90),radius+adaptation.setCanvasAdaptation(textIntervalRing)),mPaint,(dataAngle[i]-90)+180);
+//            }
         }
         //画中间白色的圆
         mPaint.setColor(Color.WHITE);
-        mCanvas.drawCircle(getOriginX(), getOriginY(), radius-adaptation.setCanvasAdaptation(ringWidth), mPaint);// 小圆
+        mCanvas.drawCircle(x, y, radius-adaptation.setCanvasAdaptation(ringWidth), mPaint);// 小圆
         //画环开始和结尾的圆
         mPaint.setColor(mDataColor[0]);
-        mCanvas.drawCircle((int)getCircleCoordinatesX(getOriginX(),-openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),
-                (int)getCircleCoordinatesY(getOriginY(),-openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),adaptation.setCanvasAdaptation(ringWidth/2), mPaint);
+        mCanvas.drawCircle((int)getCircleCoordinatesX(x,-openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),
+                (int)getCircleCoordinatesY(y,-openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),adaptation.setCanvasAdaptation(ringWidth/2), mPaint);
         mPaint.setColor(mDataColor[mDataColor.length-1]);
-        mCanvas.drawCircle((int)getCircleCoordinatesX(getOriginX(),openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),
-                (int)getCircleCoordinatesY(getOriginY(),openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),adaptation.setCanvasAdaptation(ringWidth/2), mPaint);
+        mCanvas.drawCircle((int)getCircleCoordinatesX(x,openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),
+                (int)getCircleCoordinatesY(y,openingAngle/2,(radius-adaptation.setCanvasAdaptation(ringWidth/2))),adaptation.setCanvasAdaptation(ringWidth/2), mPaint);
         //title
         mPaint.setTextAlign(Paint.Align.CENTER);
         mPaint.setColor(titleColor);
         mPaint.setTextSize(adaptation.setCanvasAdaptation(titleSize));
-        mCanvas.drawText(title,getOriginX(),getOriginY()-adaptation.setCanvasAdaptation(titleOrigin),mPaint);
-        //title2
-        mPaint.setTextAlign(Paint.Align.CENTER);
-        mPaint.setColor(title2Color);
-        mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
-        mCanvas.drawText(title2,getOriginX(),getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)+adaptation.setCanvasAdaptation(title2Line)+getTextWH(title2,mPaint).height(),mPaint);
+        mCanvas.drawText(title,x,y-adaptation.setCanvasAdaptation(titleOrigin),mPaint);
 
         //画图片，就是贴图
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_pointer);
-        Bitmap bitmap1 = resizeAndRotateImage(bitmap,radius*2,radius*2,jiao);
-        mCanvas.drawBitmap(bitmap1,getOriginX()-bitmap1.getWidth()/2,getOriginY()-bitmap1.getHeight()/2,mPaint);
+        Double d_s=new Double(jiao);
+        Bitmap bitmap1 = resizeAndRotateImage(bitmap,radius*2,radius*2,d_s.intValue());
+        mCanvas.drawBitmap(bitmap1,x-bitmap1.getWidth()/2,y-bitmap1.getHeight()/2,mPaint);
+
+        mPaint.setColor(dataDescribeColor);
+        mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(3));
+        mCanvas.drawLine(x-adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),
+                x+adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),mPaint);
 
         mPaint.setTextAlign(Paint.Align.CENTER);
-        //根据角度判断指针对应的字体的颜色和数据描述
         for (int i = 0; i < dataAngle.length; i++) {
-            if(dataAngle[i]>jiao+90){
-                mPaint.setColor(mDataColor[i-1]);
-                if(mDataDescribe!=null){
-                    mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                    mCanvas.drawText(mDataDescribe[i-1]+"",getOriginX(),getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
-                    mPaint.setColor(dataDescribeColor);
-                    mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(3));
-                    mCanvas.drawLine(getOriginX()-adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),
-                            getOriginX()+adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),mPaint);
+            if(dataAngle[i]>jiao+90) {
+                if(mDataDescribe!=null&&i!=0) {
                     mPaint.setColor(mDataColor[i-1]);
+                    mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
+                    mCanvas.drawText(mDataDescribe[i-1], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i-1], mPaint).height(), mPaint);
+                    mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
+                    mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData),x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
                 }
                 break;
-            }else if(dataAngle[i]==jiao+90){
-                if(i == dataAngle.length-1){
-                    mPaint.setColor(mDataColor[i-1]);
-                    if(mDataDescribe!=null){
-                        mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                        mCanvas.drawText(mDataDescribe[i-1]+"",getOriginX(),getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
-                        mPaint.setColor(dataDescribeColor);
-                        mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(3));
-                        mCanvas.drawLine(getOriginX()-adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),
-                                getOriginX()+adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),mPaint);
+            }
+            if(dataAngle[i]==jiao+90) {
+                if(mDataDescribe!=null) {
+                    if(i == dataAngle.length-1&&i!=0){
                         mPaint.setColor(mDataColor[i-1]);
-                    }
-                }else{
-                    mPaint.setColor(mDataColor[i]);
-                    if(mDataDescribe!=null){
+                        mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
+                        mCanvas.drawText(mDataDescribe[i-1], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i-1], mPaint).height(), mPaint);
                         mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                        mCanvas.drawText(mDataDescribe[i]+"",getOriginX(),getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
-                        mPaint.setColor(dataDescribeColor);
-                        mPaint.setStrokeWidth(adaptation.setCanvasAdaptation(3));
-                        mCanvas.drawLine(getOriginX()-adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),
-                                getOriginX()+adaptation.setCanvasAdaptation(dataDescribeLenghtLineDescribe)/2,getOriginY()+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe),mPaint);
+                        mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
+                    }else{
                         mPaint.setColor(mDataColor[i]);
+                        mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
+                        mCanvas.drawText(mDataDescribe[i], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i], mPaint).height(), mPaint);
+                        mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
+                        mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
                     }
                 }
                 break;
             }
         }
-        //画指针对应的字体
-        mPaint.setTextSize(adaptation.setCanvasAdaptation(pointerDatatextSize));
-        drawRotateText(mCanvas,pointerStartData+"",(int)getCircleCoordinatesX(getOriginX(),-jiao,radius+adaptation.setCanvasAdaptation(textIntervalRing)+adaptation.setCanvasAdaptation(10)),
-                (int)getCircleCoordinatesY(getOriginY(),-jiao,radius+adaptation.setCanvasAdaptation(textIntervalRing)),mPaint,jiao+180);
+
+////        //画指针对应的字体
+//        mPaint.setTextSize(adaptation.setCanvasAdaptation(pointerDatatextSize));
+//        drawRotateText(mCanvas,pointerStartData+"",(int)getCircleCoordinatesX(x,-jiao,radius+adaptation.setCanvasAdaptation(textIntervalRing)+adaptation.setCanvasAdaptation(10)),
+//                (int)getCircleCoordinatesY(y,-jiao,radius+adaptation.setCanvasAdaptation(textIntervalRing)),mPaint,jiao+180);
         //动态加载
         if(isDynamic){
-            if(pointerStartData<pointerData){
+            if(pointerStartData< Double.parseDouble(pointerData)){
                 pointerStartData += dynamicValue;
                 Log.d("PieChartPointer",pointerStartData+"");
                 postInvalidateDelayed(dynamicTime);
@@ -260,26 +312,25 @@ public class PieChartPointerView extends BaseDrawCakeView {
      * 设置数据
      * @param data
      */
-    public void setData(int[] data){
+    public void setData(String[] data){
         mData = data;
-        dataAngle = new int[data.length];
-        dataTotal = data[data.length-1]-data[0];
+        dataAngle = new float[data.length];
+        dataTotal = Float.parseFloat(data[data.length-1])- Float.parseFloat(data[0]);
         for (int i = 0; i < data.length; i++) {
             if(i != 0){
-                dataAngle[i] = ((360 - openingAngle) * (data[i]-data[0]) / dataTotal)+(90+openingAngle/2);
+                dataAngle[i] = ((360 - openingAngle) * (Float.parseFloat(data[i])- Float.parseFloat(data[0])) / dataTotal)+(90+openingAngle/2);
             }else{
                 dataAngle[i] = 90+openingAngle/2;
             }
         }
-        pointerStartData = mData[0];
+        pointerStartData = Double.parseDouble(mData[0]);
     }
-
     /**
      * 设置指针对应的数据
      * @param data
      */
-    public void setPointerData(int data){
-        pointerData = data;
+    public void setPointerData(String data){
+        pointerDataString = data;
     }
     /**
      * 设置数据颜色

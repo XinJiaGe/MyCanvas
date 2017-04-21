@@ -18,7 +18,7 @@ public class PieChartView extends BaseDrawCakeView {
     /**
      * 最大值
      */
-    private double maxValue = 100;
+    private float maxValue = 100;
     /**
      * 半径
      */
@@ -30,7 +30,7 @@ public class PieChartView extends BaseDrawCakeView {
     /**
      * 起始角度
      */
-    private int startAngle = 0;
+    private float startAngle = 0;
     /**
      * 字体颜色
      */
@@ -65,8 +65,8 @@ public class PieChartView extends BaseDrawCakeView {
     private int leftRightDistace = 20;
 
 
-    private double[] mData;
-    private int[] dataAngle;
+    private String[] mData;
+    private float[] dataAngle;
     private int[] mDataColor;
     private float downX;
     private float downY;
@@ -97,8 +97,15 @@ public class PieChartView extends BaseDrawCakeView {
                 mPaint.setColor(textColor);
                 mPaint.setTextAlign(Paint.Align.CENTER);
                 mPaint.setTextSize(adaptation.setCanvasAdaptation(textSize));
-                if(dataAngle[i]-startAngle>15){
-                    setCircleCoordinates((mData[i])+"%",x,y,startAngle-90+dataAngle[i]/2,radius-adaptation.setCanvasAdaptation(ringWidth)/2,mCanvas,mPaint);
+                if(Float.parseFloat(mData[i])>10){
+                    String text = null;
+                    try {
+                        text = (Float.parseFloat(mData[i])== Integer.parseInt(mData[i])? Integer.parseInt(mData[i]):mData[i])+"%";
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        text = mData[i]+"%";
+                    }
+                    setCircleCoordinates(text,x,y,startAngle-90+dataAngle[i]/2,radius-adaptation.setCanvasAdaptation(ringWidth)/2,mCanvas,mPaint);
                 }
                 startAngle += dataAngle[i];
             }
@@ -118,7 +125,7 @@ public class PieChartView extends BaseDrawCakeView {
                             mPaint.setColor(mDataColor[i]);
                         }
                     }
-                    mCanvas.drawCircle(titleRightRightDistanceStart, getTitleHeights()/2, adaptation.setCanvasAdaptation(20), mPaint);// 圆
+                    mCanvas.drawCircle(titleRightRightDistanceStart, getTitleHeights()/2, adaptation.setCanvasAdaptation(15), mPaint);// 圆
                     titleRightRightDistanceStart -= adaptation.setCanvasAdaptation(20)+adaptation.setCanvasAdaptation(titleRightTextRadiusDistance);
                 }
             }
@@ -146,26 +153,12 @@ public class PieChartView extends BaseDrawCakeView {
      * 设置数据
      * @param data
      */
-    public void setData(double[] data){
+    public void setData(String[] data){
         if(data != null) {
             mData = data;
-            dataAngle = new int[data.length];
+            dataAngle = new float[data.length];
             for (int i = 0; i < data.length; i++) {
-                dataAngle[i] = (int) (360 * data[i] / maxValue);
-            }
-        }
-    }
-    /**
-     * 设置数据
-     * @param data
-     */
-    public void setData(int[] data){
-        if(data != null){
-            mData = new double[data.length];
-            dataAngle = new int[data.length];
-            for (int i = 0; i < data.length; i++) {
-                dataAngle[i] = (int)(360*data[i]/maxValue);
-                mData[i] = data[i];
+                dataAngle[i] = (360 * Float.parseFloat(data[i])/ maxValue);
             }
         }
     }
@@ -197,11 +190,11 @@ public class PieChartView extends BaseDrawCakeView {
         super(context, attrs, defStyleAttr);
     }
 
-    public double getMaxValue() {
+    public float getMaxValue() {
         return maxValue;
     }
 
-    public void setMaxValue(double maxValue) {
+    public void setMaxValue(float maxValue) {
         this.maxValue = maxValue;
     }
 
@@ -221,11 +214,11 @@ public class PieChartView extends BaseDrawCakeView {
         this.ringWidth = ringWidth;
     }
 
-    public int getStartAngle() {
+    public float getStartAngle() {
         return startAngle;
     }
 
-    public void setStartAngle(int startAngle) {
+    public void setStartAngle(float startAngle) {
         this.startAngle = startAngle;
     }
 

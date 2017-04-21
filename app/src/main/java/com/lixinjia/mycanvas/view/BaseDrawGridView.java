@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 /**
  * 作者：李忻佳.
@@ -63,7 +64,7 @@ public class BaseDrawGridView extends BaseDrawView {
     /**
      * Y轴最大值
      */
-    private int YValueMax = 200;
+    private double YValueMax = 200;
     /**
      * Y轴最小值
      */
@@ -149,6 +150,22 @@ public class BaseDrawGridView extends BaseDrawView {
      * 空数据时的提示的字体大小
      */
     private int nullTextSize = 50;
+    /**
+     * Y轴描述是否已double形式呈现
+     */
+    private boolean YisDouble = false;
+    /**
+     * 设置Y轴单位
+     */
+    private String YCompanyText = "";
+    /**
+     * 设置Y轴单位颜色
+     */
+    private int YCompanyColor = Color.GRAY;
+    /**
+     * 设置Y轴单位字体大小
+     */
+    private int YCompanySize = 40;
 
     private String TAG = "BaseDrawView";
     private int[] XTextX;
@@ -159,6 +176,7 @@ public class BaseDrawGridView extends BaseDrawView {
     private DashPathEffect pathEffect;
     private boolean isBeforeGrid = true;
     private int YZeroTextIndex = 0;
+    private double YValueMaxDouble;
 
 
     public BaseDrawGridView(Context context) {
@@ -183,7 +201,6 @@ public class BaseDrawGridView extends BaseDrawView {
      * 绘制空数据时的提示
      */
     private void canvasNull() {
-        //绘制title左边text
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setTextSize(adaptation.setCanvasAdaptation(nullTextSize));
@@ -192,6 +209,16 @@ public class BaseDrawGridView extends BaseDrawView {
         mCanvas.drawText(nullText,mWidth/2,mHeight/2,mPaint);
     }
 
+    /**
+     * 绘制Y轴单位
+     */
+    private void setYCompany(){
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(adaptation.setCanvasAdaptation(YCompanySize));
+        mPaint.setColor(YCompanyColor);
+        mCanvas.drawText(getYCompanyText(),adaptation.setCanvasAdaptation(10),adaptation.setCanvasAdaptation(getTitleHeight())+adaptation.setCanvasAdaptation(getTitleBotCompanyHeight()/2)+adaptation.setCanvasAdaptation(20),mPaint);
+    }
     /**
      * 设置XY轴上的text
      */
@@ -231,13 +258,14 @@ public class BaseDrawGridView extends BaseDrawView {
                     mPaint.setAntiAlias(true);
                     mPaint.setTextSize(adaptation.setCanvasAdaptation(YTextSize));
                     mPaint.setColor(YTextColor);
-                    int YMaxA = 0;
+                    double YMaxA = 0;
+
                     if(YValueMin<0){
                         YMaxA = (YValueMax + Math.abs(YValueMax))/(gridYNumber-1);
                     }else{
                         YMaxA = YValueMax/(gridYNumber-1);
                     }
-                    int YMaxStart = YValueMin;
+                    double YMaxStart = YValueMin;
                     for (int i = 0; i < YtextHeight.length; i++) {
                         if(i!=0&&YMaxStart==0){
                             YZeroTextIndex = i;
@@ -245,10 +273,20 @@ public class BaseDrawGridView extends BaseDrawView {
                         if(i==0&&YMaxStart==0){
 
                         }else{
-                            if(isgridY){
-                                mCanvas.drawText(YMaxStart+"",X-getTextWH(YMaxStart+"",mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(YMaxStart+"",mPaint).height()+5,mPaint);
+                            if(YisDouble){
+                                BigDecimal b = new BigDecimal(YMaxStart);
+                                double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                if(isgridY){
+                                    mCanvas.drawText(String.valueOf(f1),X-getTextWH(String.valueOf(f1),mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(String.valueOf(f1),mPaint).height()+5,mPaint);
+                                }else{
+                                    mCanvas.drawText(String.valueOf(f1),X-getTextWH(String.valueOf(f1),mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(String.valueOf(f1),mPaint).height()/2,mPaint);
+                                }
                             }else{
-                                mCanvas.drawText(YMaxStart+"",X-getTextWH(YMaxStart+"",mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(YMaxStart+"",mPaint).height()/2,mPaint);
+                                if(isgridY){
+                                    mCanvas.drawText(String.valueOf((int)YMaxStart),X-getTextWH(String.valueOf((int)YMaxStart),mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(String.valueOf((int)YMaxStart),mPaint).height()+5,mPaint);
+                                }else{
+                                    mCanvas.drawText(String.valueOf((int)YMaxStart),X-getTextWH(String.valueOf((int)YMaxStart),mPaint).width()-adaptation.setCanvasAdaptation(15),YtextHeight[i]+getTextWH(String.valueOf((int)YMaxStart),mPaint).height()/2,mPaint);
+                                }
                             }
                         }
                         YMaxStart = YMaxStart + YMaxA;
@@ -347,13 +385,23 @@ public class BaseDrawGridView extends BaseDrawView {
      * @return
      */
     public int[] calculationXCoordinate(String[] xtext){
+        int start;
+        if(YValueMax>10){
+            YisDouble = false;
+        }
+        if(YisDouble){
+            mPaint = new Paint();
+            mPaint.setTextSize(adaptation.setCanvasAdaptation(YTextSize));
+            start = getTextWH("9.99",mPaint).width()+adaptation.setCanvasAdaptation(35);
+        }else{
+            start = getYMaxTextStr();
+        }
+
         mPaint = new Paint();
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.FILL);//设置填满
         mCanvas.drawRect(mWidth/2-mWidth/5,mHeight/2-mHeight/6,mWidth/2+mWidth/5,mHeight/2+mHeight/6,mPaint);// 长方形
-
         int length = xtext.length;
-        int start = getYMaxTextStr()+adaptation.setCanvasAdaptation(35);
         X = start;
         start += adaptation.setCanvasAdaptation(DataXLeftlength);
         int end = mWidth-adaptation.setCanvasAdaptation(DataXRightlength);
@@ -373,7 +421,22 @@ public class BaseDrawGridView extends BaseDrawView {
             setGrid();
         }
         setText(xtext);
+        setYCompany();
         return XTextX;
+    }
+    /**
+     * 绘制数据上方的text
+     * @param x
+     * @param y
+     * @param text
+     */
+    public void setDataText(int x ,float y , double text,int top,int color,int size){
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(size);
+        mPaint.setColor(color);
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        mCanvas.drawText(String.valueOf(text), x,y-top,mPaint);
     }
     /**
      * 绘制数据上方的text
@@ -418,10 +481,30 @@ public class BaseDrawGridView extends BaseDrawView {
         if(Xdata<0){
             return (heightValue + (Math.abs(Xdata) * heightValue) / Math.abs(getYValueMin()) + adaptation.setCanvasAdaptation(getGridYFromTop()));
         }else{
-            int aaa = (Xdata * heightValue) /getYValueMax();
-            int bbb = heightValue - (Xdata * heightValue) /getYValueMax();
-            int ccc = heightValue - (Xdata * heightValue) /getYValueMax()+adaptation.setCanvasAdaptation(getGridYFromTop());
-            return heightValue - (Xdata * heightValue) /getYValueMax() +adaptation.setCanvasAdaptation(getGridYFromTop());
+            double aaa = (Xdata * heightValue) /getYValueMax();
+            double bbb = heightValue - (Xdata * heightValue) /getYValueMax();
+            double ccc = heightValue - (Xdata * heightValue) /getYValueMax()+adaptation.setCanvasAdaptation(getGridYFromTop());
+            return (int)(heightValue - (Xdata * heightValue) /getYValueMax() +adaptation.setCanvasAdaptation(getGridYFromTop()));
+        }
+    }
+    /**
+     * 获取X轴坐标对应值的Y值
+     * @param Xdata X轴对应的Y轴的数据
+     * @return  X轴对应的Y轴的坐标
+     */
+    public float getYValue(double Xdata){
+        //算出值在屏幕的Y轴大小
+        int heightValue = Y - adaptation.setCanvasAdaptation(getGridYFromTop());
+        if(YValueMin != 0){
+            heightValue = heightValue/2;
+        }
+        if(Xdata<0){
+            return (float) ((heightValue + (Math.abs(Xdata) * heightValue) / Math.abs(getYValueMin()) + adaptation.setCanvasAdaptation(getGridYFromTop())));
+        }else{
+            double aaa = (Xdata * heightValue) /getYValueMax();
+            double bbb = heightValue - (Xdata * heightValue) /getYValueMax();
+            double ccc = heightValue - (Xdata * heightValue) /getYValueMax()+adaptation.setCanvasAdaptation(getGridYFromTop());
+            return (float) (heightValue - (Xdata * heightValue) /getYValueMax() +adaptation.setCanvasAdaptation(getGridYFromTop()));
         }
     }
     /**
@@ -435,7 +518,7 @@ public class BaseDrawGridView extends BaseDrawView {
         }else{
             //算出值在屏幕的Y轴大小
             int heightValue = Y - adaptation.setCanvasAdaptation(getGridYFromTop());
-            return (int)(heightValue - (Double.valueOf(Xdata) * heightValue) /getYValueMax() +adaptation.setCanvasAdaptation(getGridYFromTop()));
+            return (int)(heightValue - (Double.valueOf(Xdata) * heightValue) /(int)getYValueMax() +adaptation.setCanvasAdaptation(getGridYFromTop()));
         }
     }
     /**
@@ -494,7 +577,7 @@ public class BaseDrawGridView extends BaseDrawView {
     private int getYMaxTextStr(){
         mPaint = new Paint();
         mPaint.setTextSize(adaptation.setCanvasAdaptation(YTextSize));
-        return getTextWH(YValueMax+"",mPaint).width();
+        return getTextWH(YValueMax+"",mPaint).width()+adaptation.setCanvasAdaptation(10);
     }
 
     @Override
@@ -593,11 +676,11 @@ public class BaseDrawGridView extends BaseDrawView {
         this.YTextColor = YTextColor;
     }
 
-    public int getYValueMax() {
+    public double getYValueMax() {
         return YValueMax;
     }
 
-    public void setYValueMax(int YValueMax) {
+    public void setYValueMax(double YValueMax) {
         this.YValueMax = YValueMax;
     }
 
@@ -679,7 +762,13 @@ public class BaseDrawGridView extends BaseDrawView {
 
     public void setTitleHeight(int titleHeight) {
         setTitleHeights(titleHeight);
-        setGridYFromTop(titleHeight+50);
+        setGridYFromTop(getTitleBotCompanyHeight()+titleHeight+50);
+    }
+
+    public void setYCompanyText(String YCompanyText) {
+        setTitleBotCompanyHeight(30);
+        setGridYFromTop(getGridYFromTop()+40);
+        this.YCompanyText = YCompanyText;
     }
 
     public boolean isXY() {
@@ -744,5 +833,17 @@ public class BaseDrawGridView extends BaseDrawView {
 
     public void setTextXDistance(int textXDistance) {
         this.textXDistance = textXDistance;
+    }
+
+    public boolean isYisDouble() {
+        return YisDouble;
+    }
+
+    public void setYisDouble(boolean yisDouble) {
+        YisDouble = yisDouble;
+    }
+
+    public String getYCompanyText() {
+        return YCompanyText;
     }
 }

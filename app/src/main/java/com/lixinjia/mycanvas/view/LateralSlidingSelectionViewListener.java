@@ -8,8 +8,4 @@ package com.lixinjia.mycanvas.view;
 
 public abstract class LateralSlidingSelectionViewListener {
     public abstract void click(int index);
-    public void slideIn(boolean isSlide,int index){
-
-
-    }
 }

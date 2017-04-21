@@ -2,6 +2,7 @@ package com.lixinjia.mycanvas.tool;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.DisplayMetrics;
 
 import java.util.HashMap;
@@ -24,10 +25,15 @@ public class Adaptation {
         init();
     }
     private void init(){
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity)mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        screenWidth = displayMetrics.widthPixels;
-        screenHeight = displayMetrics.heightPixels;
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity)mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            screenWidth = displayMetrics.widthPixels;
+            screenHeight = displayMetrics.heightPixels;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         float ratioWidth = (float)screenWidth / 1080;
         float ratioHeight = (float)screenHeight / 1920;
         RATIO = Math.min(ratioWidth, ratioHeight);
@@ -43,6 +49,29 @@ public class Adaptation {
     }
 
     /**
+     * 获取paint真实高度
+     * @param paint
+     * @return
+     */
+    public float getCanvasTextHeight(Paint paint){
+        Paint.FontMetrics fontMetrics= paint.getFontMetrics();
+        float textHeight = (-fontMetrics.ascent-fontMetrics.descent);
+        return textHeight;
+    }
+    /**
+     * 获取数组里面的最大值和最小值
+     * @param value
+     * @return
+     */
+    public int getValueMaxIndex(int[] value){
+        int i,min,max;
+        min=max=value[0];
+        for(i=0;i<value.length;i++){
+            if(value[i]>max)   // 判断最大值
+                return i;
+        }
+        return -1;
+    } /**
      * 获取数组里面的最大值和最小值
      * @param value
      * @return
@@ -88,15 +117,99 @@ public class Adaptation {
      * @return
      */
     public int getValueMaxLargeValue(double value){
+//        if(value>0){
+//            if(value>5){
+//                if(value>10){
+//                    if(value>20){
+//                        if(value>50){
+//                            if(value>100){
+//                                return (int)value+100;
+//                            }else{
+//                                return 100;
+//                            }
+//                        }else{
+//                            return 50;
+//                        }
+//                    }else{
+//                        return 20;
+//                    }
+//                }else{
+//                    return 10;
+//                }
+//            }else{
+//                return 5;
+//            }
+//        }else{
+//            return (int)value;
+//        }
         int intValue = new Double(value).intValue();
-        if(intValue>9){
-            String strvalue = String.valueOf(Integer.parseInt(String.valueOf(intValue).substring(0,1))+1);
-            for (int i = 0; i < String.valueOf(intValue).length()-1; i++) {
-                strvalue += "0";
+        String strValue = String.valueOf(intValue);
+        if(value>0){
+            String laststr = Integer.parseInt(strValue.substring(0,1))+1+"";
+            for (int i = 0; i < strValue.length()-1; i++) {
+                laststr+="0";
             }
-            return Integer.parseInt(strvalue);
+            String laststr2 = Integer.parseInt(strValue.substring(0,1))+"";
+            for (int i = 0; i < strValue.length()-1; i++) {
+                laststr2+="0";
+            }
+            if(strValue.equals(laststr2)){
+                return Integer.parseInt(laststr2);
+            }else{
+                return Integer.parseInt(laststr);
+            }
         }else{
-            return intValue+1;
+            return intValue;
+        }
+    }
+    /**
+     * 获取数组里面的最大值的大值
+     * @param value int
+     * @return
+     */
+    public int getValueMaxLargeValue(int value){
+//        if(value>0){
+//            if(value>5) {
+//                if (value > 10) {
+//                    if (value > 20) {
+//                        if (value > 50) {
+//                            if (value > 100) {
+//                                return value + 100;
+//                            } else {
+//                                return 100;
+//                            }
+//                        } else {
+//                            return 50;
+//                        }
+//                    } else {
+//                        return 20;
+//                    }
+//                } else {
+//                    return 10;
+//                }
+//            }else{
+//                return 5;
+//            }
+//        }else{
+//            return value;
+//        }
+        String strValue = String.valueOf(value);
+        if(value>0){
+            String laststr = Integer.parseInt(strValue.substring(0,1))+1+"";
+            for (int i = 0; i < strValue.length()-1; i++) {
+                laststr+="0";
+            }
+            String laststr2 = Integer.parseInt(strValue.substring(0,1))+"";
+            for (int i = 0; i < strValue.length()-1; i++) {
+                laststr2+="0";
+            }
+            if(strValue.equals(laststr2)){
+                return Integer.parseInt(laststr2);
+            }else{
+                return Integer.parseInt(laststr);
+            }
+        }else{
+            return value;
         }
     }
 }
