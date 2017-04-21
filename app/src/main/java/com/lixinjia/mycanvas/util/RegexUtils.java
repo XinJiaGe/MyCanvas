@@ -1,6 +1,7 @@
 package com.lixinjia.mycanvas.util;
 
-import com.blankj.utilcode.constant.RegexConstants;
+
+import com.lixinjia.mycanvas.constants.RegexConstants;
 
 import java.util.ArrayList;
 import java.util.List;

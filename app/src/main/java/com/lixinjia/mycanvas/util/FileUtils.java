@@ -1,8 +1,7 @@
 package com.lixinjia.mycanvas.util;
 
-import android.annotation.SuppressLint;
 
-import com.blankj.utilcode.constant.MemoryConstants;
+import com.lixinjia.mycanvas.constants.MemoryConstants;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -26,6 +25,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.lixinjia.mycanvas.util.ConvertUtils.byte2FitMemorySize;
+import static com.lixinjia.mycanvas.util.StringUtils.isSpace;
 
 /**
  * <pre>
@@ -1360,28 +1362,28 @@ public final class FileUtils {
      * @param byteNum 字节数
      * @return 合适内存大小
      */
-    @SuppressLint("DefaultLocale")
-    private static String byte2FitMemorySize(long byteNum) {
-        if (byteNum < 0) {
-            return "shouldn't be less than zero!";
-        } else if (byteNum < MemoryConstants.KB) {
-            return String.format("%.3fB", (double) byteNum + 0.0005);
-        } else if (byteNum < MemoryConstants.MB) {
-            return String.format("%.3fKB", (double) byteNum / MemoryConstants.KB + 0.0005);
-        } else if (byteNum < MemoryConstants.GB) {
-            return String.format("%.3fMB", (double) byteNum / MemoryConstants.MB + 0.0005);
-        } else {
-            return String.format("%.3fGB", (double) byteNum / MemoryConstants.GB + 0.0005);
-        }
-    }
-
-    private static boolean isSpace(String s) {
-        if (s == null) return true;
-        for (int i = 0, len = s.length(); i < len; ++i) {
-            if (!Character.isWhitespace(s.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    @SuppressLint("DefaultLocale")
+//    private static String byte2FitMemorySize(long byteNum) {
+//        if (byteNum < 0) {
+//            return "shouldn't be less than zero!";
+//        } else if (byteNum < MemoryConstants.KB) {
+//            return String.format("%.3fB", (double) byteNum + 0.0005);
+//        } else if (byteNum < MemoryConstants.MB) {
+//            return String.format("%.3fKB", (double) byteNum / MemoryConstants.KB + 0.0005);
+//        } else if (byteNum < MemoryConstants.GB) {
+//            return String.format("%.3fMB", (double) byteNum / MemoryConstants.MB + 0.0005);
+//        } else {
+//            return String.format("%.3fGB", (double) byteNum / MemoryConstants.GB + 0.0005);
+//        }
+//    }
+//
+//    private static boolean isSpace(String s) {
+//        if (s == null) return true;
+//        for (int i = 0, len = s.length(); i < len; ++i) {
+//            if (!Character.isWhitespace(s.charAt(i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 }

@@ -2,7 +2,7 @@ package com.lixinjia.mycanvas.util;
 
 import android.annotation.SuppressLint;
 
-import com.blankj.utilcode.constant.TimeConstants;
+import com.lixinjia.mycanvas.constants.TimeConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
