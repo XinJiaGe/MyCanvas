@@ -3,11 +3,14 @@ package com.lixinjia.mycanvas.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.lixinjia.mycanvas.R;
@@ -60,6 +63,12 @@ public class MainActivity extends Activity {
         init();
         jiazaiData();
     }
+    public void meizuFingerprint(View view){
+        meizuFingerprint();
+    }
+    public void vector(View view){
+        vectorView();
+    }
     public void zsyhorizontal(View view){
         zsyhorizontalView();
     }
@@ -91,6 +100,30 @@ public class MainActivity extends Activity {
         qinKong();
     }
 
+    /**
+     * 魅族指纹识别
+     */
+    private void meizuFingerprint(){
+        Intent intent = new Intent(this,MyGameActivity.class);
+        startActivity(intent);
+    }
+    private void vectorView(){
+        final ImageView imageView = (ImageView) findViewById(R.id.layout_img);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Drawable drawable = imageView.getDrawable();
+                if (drawable instanceof Animatable){
+                    ((Animatable)drawable).start();
+                }
+            }
+        });
+    }
+
+    /**
+     * 自适应horizontal布局
+     */
     private void zsyhorizontalView(){
         AdaptiveHorizontalLayoutView horizontalLayoutView = new AdaptiveHorizontalLayoutView(this);
         horizontalLayoutView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -120,6 +153,10 @@ public class MainActivity extends Activity {
         horizontalLayoutView.startCanvase();
         linearLayout.addView(horizontalLayoutView);
     }
+
+    /**
+     * SurfaceView
+     */
     private void gameView(){
         Intent intent = new Intent(this,MyGameActivity.class);
         startActivity(intent);

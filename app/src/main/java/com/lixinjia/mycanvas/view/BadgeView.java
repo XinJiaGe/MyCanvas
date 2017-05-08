@@ -18,11 +18,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.lixinjia.mycanvas.tool.Adaptation;
+
 
 /**
  * A simple text label view that can be applied as a "badge" to any given {@link android.view.View}. 
@@ -30,6 +30,7 @@ import com.lixinjia.mycanvas.tool.Adaptation;
  *
  * @author Jeff Gilfelt
  */
+
 /**
 	// 默认的badge效果
 	View target = findViewById(R.id.default_target);

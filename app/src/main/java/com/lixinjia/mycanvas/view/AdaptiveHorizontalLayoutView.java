@@ -8,6 +8,8 @@ import android.view.ViewTreeObserver;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
 
+import static com.lixinjia.mycanvas.util.JiaUtil.getViewWidth;
+
 /**
  * 作者：李忻佳.
  * 时间：2017/2/22.
@@ -116,29 +118,6 @@ public class AdaptiveHorizontalLayoutView extends LinearLayout {
                 }
             }
         }
-    }
-    /**
-     * 获取控件的宽度
-     * @param view
-     * @return
-     */
-    public static int getViewWidth(View view) {
-        int width = 0;
-        width = view.getWidth();
-        if (width <= 0) {
-            measureView(view);
-            width = view.getMeasuredWidth();
-        }
-        return width;
-    }
-    /**
-     * 测量角度
-     * @param v
-     */
-    public static void measureView(View v) {
-        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        v.measure(w, h);
     }
     public void setOnMyClickListener(onMyClickListener listener){
         this.mListener = listener;

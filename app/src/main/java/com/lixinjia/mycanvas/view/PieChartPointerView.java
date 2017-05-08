@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.lixinjia.mycanvas.R;
-import com.lixinjia.mycanvas.util.DecimalUtils;
+import com.lixinjia.mycanvas.util.JiaUtil;
 
 
 /**
@@ -270,7 +270,7 @@ public class PieChartPointerView extends BaseDrawCakeView {
                     mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
                     mCanvas.drawText(mDataDescribe[i-1], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i-1], mPaint).height(), mPaint);
                     mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                    mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData),x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
+                    mCanvas.drawText(JiaUtil.deleteDecimal(pointerStartData),x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
                 }
                 break;
             }
@@ -281,13 +281,13 @@ public class PieChartPointerView extends BaseDrawCakeView {
                         mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
                         mCanvas.drawText(mDataDescribe[i-1], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i-1], mPaint).height(), mPaint);
                         mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                        mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
+                        mCanvas.drawText(JiaUtil.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
                     }else{
                         mPaint.setColor(mDataColor[i]);
                         mPaint.setTextSize(adaptation.setCanvasAdaptation(title2Size));
                         mCanvas.drawText(mDataDescribe[i], x, y + adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe) + adaptation.setCanvasAdaptation(title2Line) + getTextWH(mDataDescribe[i], mPaint).height(), mPaint);
                         mPaint.setTextSize(adaptation.setCanvasAdaptation(dataDescribeTextSize));
-                        mCanvas.drawText(DecimalUtils.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
+                        mCanvas.drawText(JiaUtil.deleteDecimal(pointerStartData)+"",x,y+adaptation.setCanvasAdaptation(dataDescribeBottonLineDescribe)-adaptation.setCanvasAdaptation(dataDescribeBotton),mPaint);
                     }
                 }
                 break;
