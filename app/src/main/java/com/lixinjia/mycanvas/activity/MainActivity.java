@@ -63,6 +63,9 @@ public class MainActivity extends Activity {
         init();
         jiazaiData();
     }
+    public void openRedEnvelopes(View view){
+        openRedEnvelope();
+    }
     public void meizuFingerprint(View view){
         meizuFingerprint();
     }
@@ -101,10 +104,17 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * 打开红包
+     */
+    private void openRedEnvelope(){
+        Intent intent = new Intent(this,OpenRedEnvelopesActivty.class);
+        startActivity(intent);
+    }
+    /**
      * 魅族指纹识别
      */
     private void meizuFingerprint(){
-        Intent intent = new Intent(this,MyGameActivity.class);
+        Intent intent = new Intent(this,MeiZuFingerprint.class);
         startActivity(intent);
     }
     private void vectorView(){

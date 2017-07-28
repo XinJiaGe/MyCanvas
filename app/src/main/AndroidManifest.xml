@@ -32,6 +32,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape">
         </activity>
+        <activity
+            android:name=".activity.MeiZuFingerprint">
+        </activity>
+        <activity
+            android:name=".activity.OpenRedEnvelopesActivty">
+        </activity>
     </application>
 
 </manifest>

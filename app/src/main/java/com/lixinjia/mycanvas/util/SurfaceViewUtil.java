@@ -182,6 +182,30 @@ public class SurfaceViewUtil {
         }
         return isInclude;
     }
+
+    /**
+     * 判断点击位置是否在园内
+     * @param clickX
+     * @param clickY
+     * @param gardenX
+     * @param gardenY
+     * @param gardenR
+     * @return
+     */
+    public static boolean isGradenClick(int clickX,int clickY,int gardenX,int gardenY,int gardenR){
+        //点击位置x坐标与圆心的x坐标的距离d
+        int distanceX = Math.abs(clickX-gardenX);
+        //点击位置y坐标与圆心的y坐标的距离
+        int distanceY = Math.abs(clickY-gardenY);
+        //点击位置与圆心的直线距离
+        int distanceZ = (int) Math.sqrt(Math.pow(distanceX,2)+Math.pow(distanceY,2));
+
+        //如果点击位置与圆心的距离大于圆的半径，证明点击位置没有在圆内
+        if(distanceZ > gardenR){
+            return false;
+        }
+        return true;
+    }
     /**
      * 矩形的碰撞情况判断
      * @param x1 第一个矩形的X坐标

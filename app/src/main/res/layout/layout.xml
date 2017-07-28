@@ -15,6 +15,12 @@
             android:onClick="meizuFingerprint"
             android:layout_weight="1"
             android:text="魅族指纹识别"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="openRedEnvelopes"
+            android:layout_weight="1"
+            android:text="打开红包"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
