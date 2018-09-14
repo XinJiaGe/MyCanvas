@@ -120,7 +120,7 @@
                 android:id="@+id/layout_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/animated_vector_menu_back"/>
+                app:srcCompat="@drawable/ic_launcher"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
