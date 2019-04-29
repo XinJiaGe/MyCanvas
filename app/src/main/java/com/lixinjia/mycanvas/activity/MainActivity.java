@@ -171,8 +171,11 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this,MyGameActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * 可旋转的饼图
+     */
     private void bingzi() {
-        //可旋转的饼图
         pieChartView = new PieChartView(this);
         pieChartView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
 
@@ -230,8 +233,11 @@ public class MainActivity extends Activity {
         linearLayout.addView(selectView);
         index ++ ;
     }
+
+    /**
+     * 圆形指针
+     */
     private void yuanZheng(){
-        //圆形指针
         pieChartPointer = new PieChartPointerView(this);
         pieChartPointer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width+width/7));
         pieChartPointer.setPointerData("30");
@@ -284,8 +290,11 @@ public class MainActivity extends Activity {
         th.start();
         linearLayout.addView(loadingProgress);
     }
+
+    /**
+     * 折线
+     */
     private void zheDianData(){
-        //折线
         straightLineView = new StraightLineView(this);
         straightLineView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
         straightLineView.setYValueMax(10000);
@@ -523,8 +532,11 @@ public class MainActivity extends Activity {
         straightLineView.setTargetValueTitleRightText(targetValueTitleRightText);
         linearLayout.addView(straightLineView);
     }
+
+    /**
+     * 点图
+     */
     private void dianData(){
-        //点图
         spotView = new ShapePointView(this);
         spotView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
         spotView.setDataText(true);
@@ -623,8 +635,11 @@ public class MainActivity extends Activity {
 
         linearLayout.addView(spotView);
     }
+
+    /**
+     * 折线图
+     */
     private void zheXianData(){
-        //折线图
         lineView = new SpotLineView(this);
         lineView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
         lineView.setDataText(true);
@@ -765,8 +780,11 @@ public class MainActivity extends Activity {
 
         linearLayout.addView(lineView);
     }
+
+    /**
+     * 柱状图
+     */
     private void zhuData(){
-        //柱状图
         histogramView = new HistogramView(this);
         histogramView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,width-width/4));
         //数据
